@@ -94,7 +94,7 @@
   .calc-section{display:flex;flex-direction:column;gap:.2rem;}
   .calc-section-label{font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
   .calc-row{display:grid;gap:.25rem;}
-  .calc-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.5rem .3rem;aspect-ratio:1/1;font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:0;}
+  .calc-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.5rem .3rem;aspect-ratio:1/1;max-width:55px;max-height:55px;font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:0;}
   .calc-btn:active{background:var(--surface2);}
   .calc-btn .label-part{font-size:.72rem;white-space:nowrap;color:var(--accent);}
   body.light .calc-btn .label-part{color:#111;}
@@ -199,11 +199,11 @@
       </button>
     </div>
   </div>
-  <div class="table-wrap" id="table-wrap" style="min-height:230px"><table id="score-table"></table></div>
+  <div class="table-wrap" id="table-wrap"><table id="score-table"></table></div>
   <div class="entry-panel">
     <div class="entry-top">
       <div class="current-player-label" id="current-player-label">—</div>
-      <span id="calc-total-label" style="color:var(--accent);font-weight:700;font-size:.95rem;">0 pts</span>
+      <span id="calc-total-label" style="color:var(--accent);font-weight:700;font-size:1.3rem;">0 pts</span>
     </div>
     <div id="bars-warning-box"></div>
     <div class="input-row">
