@@ -199,6 +199,7 @@
       </button>
     </div>
   </div>
+  <div id="error-msg" class="error-msg"></div>
   <div class="table-wrap" id="table-wrap"><table id="score-table"></table></div>
   <div class="entry-panel">
     <div class="entry-top">
@@ -210,7 +211,6 @@
       <input type="number" id="manual-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="Score du tour"/>
       <button class="btn-validate" id="btn-validate">Valider ✓</button>
     </div>
-    <div class="error-msg" id="error-msg"></div>
     <div class="actions-row">
       <button class="btn-action" id="calc-reset-btn">Réinitialiser</button>
       <button class="btn-action zero" id="btn-zero">✕ Zéro</button>
@@ -352,7 +352,7 @@ var SECTIONS=[
   {label:'Divers',cols:6,combos:[{die:5,pts:50},{die:1,pts:100},{label:'Suite',pts:1000}]},
   {label:'Triple ×3',cols:6,combos:[{die:1,pts:1000},{die:2,pts:200},{die:3,pts:300},{die:4,pts:400},{die:5,pts:500},{die:6,pts:600}]},
   {label:'Quadruple ×4',cols:6,combos:[{die:1,pts:2000},{die:2,pts:400},{die:3,pts:600},{die:4,pts:800},{die:5,pts:1000},{die:6,pts:1200}]},
-  {label:'Quintuple ×5',cols:6,combos:[{die:1,pts:4000},{die:2,pts:800},{die:3,pts:1200},{die:4,pts:1600},{die:5,pts:2000},{die:6,pts:2400}]},
+  {label:'Quintuple ×5',cols:6,combos:[{die:1,pts:4000},{die:2,pts:800},{die:3,pts:1200},{die:4,pts:1600},{die:5,pts:2000},{die:6,pts:2400}],extra:4},
 ];
 
 // ── STATE ──
@@ -405,7 +405,18 @@ function buildCalc(){
       row.appendChild(btn);
     });
     for(var s=sec.combos.length;s<sec.cols;s++){var empty=document.createElement('div');row.appendChild(empty);}
-    wrap.appendChild(row);area.appendChild(wrap);
+    wrap.appendChild(row);
+    // Lignes vides supplémentaires sous la section
+    if(sec.extra){
+      for(var e=0;e<sec.extra;e++){
+        var emptyRow=document.createElement('div');
+        emptyRow.className='calc-row';
+        emptyRow.style.gridTemplateColumns='repeat('+sec.cols+',1fr)';
+        for(var ee=0;ee<sec.cols;ee++){var ed=document.createElement('div');emptyRow.appendChild(ed);}
+        wrap.appendChild(emptyRow);
+      }
+    }
+    area.appendChild(wrap);
   });
 }
 
