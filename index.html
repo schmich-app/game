@@ -17,17 +17,18 @@
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   input[type=number] { -moz-appearance: textfield; }
 
-  /* Chaque écran occupe toute la fenêtre */
   .screen { display: none; position: fixed; inset: 0; overflow-y: auto; background: var(--bg); z-index: 1; }
   .screen.active { display: block; }
+  #game { display: none; flex-direction: column; overflow: hidden; }
+  #game.active { display: flex; }
 
-  /* ── SETUP ── */
+  /* SETUP */
   #setup { display: flex; flex-direction: column; }
   #setup.active { display: flex; }
-  .setup-inner { max-width: 480px; margin: 0 auto; padding: 0 1rem 5rem; width: 100%; }
   .setup-header { text-align: center; padding: 2rem 1rem 1.5rem; }
   .setup-header h1 { font-size: 2.2rem; font-weight: 300; letter-spacing: .28em; color: var(--accent); text-transform: uppercase; }
   .setup-header p { color: var(--text-muted); font-size: .75rem; letter-spacing: .12em; margin-top: .3rem; }
+  .setup-inner { max-width: 480px; margin: 0 auto; padding: 0 1rem 5rem; width: 100%; }
   .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
   .setup-card h2 { font-size: .78rem; font-weight: 400; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1.2rem; }
   #players-list { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
@@ -40,9 +41,7 @@
   .btn-secondary-full { width: 100%; padding: .9rem; margin-top: .6rem; background: none; color: var(--text-muted); border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; cursor: pointer; }
   .setup-note { color: var(--text-muted); font-size: .75rem; text-align: center; margin-top: .6rem; }
 
-  /* ── GAME ── */
-  #game { display: none; flex-direction: column; overflow: hidden; }
-  #game.active { display: flex; }
+  /* GAME HEADER */
   .game-header { display: flex; justify-content: space-between; align-items: center; padding: .6rem 1rem; border-bottom: 1px solid var(--border); flex-shrink: 0; gap: .5rem; }
   .turn-info { color: var(--accent); font-size: .9rem; font-weight: 600; }
   .header-btns { display: flex; gap: .5rem; }
@@ -58,7 +57,7 @@
   td.player-name-td { text-align: left; padding: .4rem .6rem; position: sticky; left: 0; background: var(--bg); z-index: 1; font-size: .82rem; line-height: 1.3; }
   td.player-name-td.active-row { background: #1e1e1e; color: var(--accent); font-weight: 600; }
   .player-name-main { display: flex; align-items: center; gap: .3rem; }
-  .player-badges-row { font-size: .72rem; line-height: 1; margin-top: .15rem; letter-spacing: .05em; }
+  .player-badges-row { font-size: .72rem; margin-top: .15rem; }
   .bars-badge { font-size: .75rem; color: var(--bar-color); font-weight: 700; }
   .bars-badge.danger { color: var(--red); }
   td.score-cell { text-align: center; padding: .4rem .5rem; font-size: .8rem; }
@@ -70,30 +69,38 @@
   td.pending { color: var(--text-muted); font-size: .75rem; text-align: center; background: #1a1a1a; }
   td.empty { color: var(--border); text-align: center; font-size: .75rem; }
 
-  /* ── ENTRY PANEL ── */
-  .entry-panel { flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); padding: .8rem 1rem 1rem; max-height: 60vh; overflow-y: auto; }
+  /* ENTRY PANEL */
+  .entry-panel { flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); padding: .8rem 1rem 1rem; max-height: 62vh; overflow-y: auto; }
   .entry-top { margin-bottom: .5rem; }
   .current-player-label { font-size: 1rem; font-weight: 600; color: var(--accent); }
   .bars-warning { background: #3a2200; border: 1px solid var(--bar-color); border-radius: 6px; padding: .5rem .8rem; font-size: .8rem; color: var(--bar-color); margin-bottom: .6rem; line-height: 1.4; }
   .bars-warning.danger { background: #3a0000; border-color: var(--red); color: var(--red); }
-  .input-row { display: flex; gap: .5rem; margin-bottom: .6rem; }
-  .input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .65rem .8rem; font-size: 1.1rem; text-align: center; font-family: var(--font); outline: none; }
+  .input-row { display: flex; gap: .5rem; margin-bottom: .5rem; }
+  .input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .65rem .8rem; font-size: 1.1rem; text-align: center; font-family: var(--font); outline: none; transition: border-color .2s; }
   .input-row input:focus { border-color: var(--accent2); }
+  .input-row input.error { border-color: var(--red); }
+  .error-msg { color: var(--red); font-size: .75rem; margin-bottom: .5rem; min-height: 1rem; }
   .btn-validate { background: var(--accent); color: #111; border: none; border-radius: 6px; padding: .65rem 1.1rem; font-size: .95rem; font-weight: 700; cursor: pointer; flex-shrink: 0; }
   .actions-row { display: flex; gap: .4rem; margin-bottom: .7rem; flex-wrap: wrap; }
   .btn-action { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); padding: .45rem .7rem; font-size: .78rem; cursor: pointer; white-space: nowrap; }
   .btn-action.prev-score { border-color: var(--accent2); color: var(--accent); }
+  .btn-action.zero { border-color: #6b2020; color: var(--red); }
+  .btn-action.correct { border-color: #3a3a6b; color: #9999dd; }
   .btn-action:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* CALC */
   .calc-toggle-btn { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .7rem 1rem; font-size: .88rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
   .calc-toggle-btn .calc-total { color: var(--accent); font-weight: 700; font-size: .95rem; }
-  .calc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .35rem; margin-bottom: .6rem; }
+  .calc-section { margin-bottom: .6rem; }
+  .calc-section-label { font-size: .68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .35rem; padding-left: .1rem; }
+  .calc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .3rem; }
   .calc-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .5rem .6rem; font-size: .78rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: .4rem; }
   .calc-btn:active { background: var(--surface2); }
   .calc-btn .pts { color: var(--accent); font-weight: 600; font-size: .75rem; flex-shrink: 0; }
-  .calc-btn .dice-wrap { display: flex; align-items: center; gap: .2rem; flex-shrink: 0; }
+  .calc-btn .dice-wrap { display: flex; align-items: center; gap: .2rem; }
   .calc-btn .label-part { flex: 1; text-align: left; }
 
-  /* ── OVERLAYS ── */
+  /* OVERLAYS */
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: flex; align-items: flex-end; justify-content: center; z-index: 10; }
   .popup { background: var(--surface); border-top: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 480px; padding: 1.5rem 1.2rem 2rem; max-height: 80vh; overflow-y: auto; }
   .popup h3 { font-size: .78rem; font-weight: 400; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .8rem; }
@@ -104,7 +111,6 @@
   .rank-pts { font-weight: 700; color: var(--accent); font-size: .9rem; }
   .popup-close { width: 100%; margin-top: 1rem; background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); padding: .7rem; font-size: .9rem; cursor: pointer; }
 
-  /* WINNER overlay */
   .winner-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 1rem; }
   .winner-popup { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; max-width: 400px; padding: 2rem 1.5rem; text-align: center; max-height: 90vh; overflow-y: auto; }
   .winner-title { font-size: .75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .15em; margin-bottom: 1rem; }
@@ -112,32 +118,35 @@
   .winner-score-text { font-size: .95rem; color: var(--text-muted); margin-bottom: 1.5rem; }
   .rankings { text-align: left; border-top: 1px solid var(--border); padding-top: 1rem; margin-bottom: 1.5rem; }
 
-  /* REMATCH overlay */
   .rematch-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: flex; align-items: center; justify-content: center; z-index: 30; padding: 1rem; }
   .rematch-popup { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; max-width: 380px; padding: 1.8rem 1.5rem; max-height: 90vh; overflow-y: auto; }
   .rematch-popup h2 { font-size: .78rem; font-weight: 400; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .6rem; }
   .rematch-popup p { font-size: .85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; }
   .first-player-list { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
   .first-player-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .75rem 1rem; font-size: .95rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-  .first-player-btn:active { border-color: var(--accent2); }
-  .fp-badges { font-size: .9rem; letter-spacing: .05em; }
+  .fp-badges { font-size: .9rem; }
 
-  /* ALERT */
   .alert-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; z-index: 40; padding: 1rem; }
   .alert-box { background: var(--surface); border: 1px solid var(--red); border-radius: var(--radius); padding: 1.8rem 1.5rem; max-width: 320px; width: 100%; text-align: center; }
   .alert-box h3 { color: var(--red); font-size: 1rem; margin-bottom: .7rem; }
   .alert-box p { color: var(--text-muted); font-size: .88rem; margin-bottom: 1.3rem; line-height: 1.5; }
   .alert-box button { background: var(--red); color: #fff; border: none; border-radius: 6px; padding: .65rem 1.5rem; font-size: .9rem; cursor: pointer; font-weight: 700; }
+
+  .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
+  .confirm-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.8rem 1.5rem; max-width: 320px; width: 100%; text-align: center; }
+  .confirm-box h3 { color: var(--accent); font-size: 1rem; margin-bottom: .7rem; }
+  .confirm-box p { color: var(--text-muted); font-size: .88rem; margin-bottom: 1.3rem; line-height: 1.5; }
+  .confirm-btns { display: flex; gap: .6rem; justify-content: center; }
+  .confirm-btns button { border-radius: 6px; padding: .65rem 1.2rem; font-size: .9rem; cursor: pointer; border: none; }
+  .confirm-cancel-btn { background: none; border: 1px solid var(--border) !important; color: var(--text-muted); }
+  .confirm-ok-btn { background: var(--accent); color: #111; font-weight: 700; }
 </style>
 </head>
 <body>
 
-<!-- ── SETUP ── -->
+<!-- SETUP -->
 <div id="setup" class="screen active">
-  <div class="setup-header">
-    <h1>Schmich</h1>
-    <p>Compteur de points</p>
-  </div>
+  <div class="setup-header"><h1>Schmich</h1><p>Compteur de points</p></div>
   <div class="setup-inner">
     <div class="setup-card">
       <h2>Joueurs</h2>
@@ -149,7 +158,7 @@
   </div>
 </div>
 
-<!-- ── GAME ── -->
+<!-- GAME -->
 <div id="game" class="screen">
   <div class="game-header">
     <div class="turn-info" id="turn-info">Tour 1</div>
@@ -158,33 +167,30 @@
       <button class="btn-sm" id="btn-new-game">Nouvelle partie</button>
     </div>
   </div>
-  <div class="table-wrap" id="table-wrap">
-    <table id="score-table"></table>
-  </div>
+  <div class="table-wrap" id="table-wrap"><table id="score-table"></table></div>
   <div class="entry-panel">
-    <div class="entry-top">
-      <div class="current-player-label" id="current-player-label">—</div>
-    </div>
+    <div class="entry-top"><div class="current-player-label" id="current-player-label">—</div></div>
     <div id="bars-warning-box"></div>
     <div class="input-row">
       <input type="number" id="manual-input" min="0" placeholder="Score du tour"/>
       <button class="btn-validate" id="btn-validate">Valider ✓</button>
     </div>
+    <div class="error-msg" id="error-msg"></div>
     <div class="actions-row">
-      <button class="btn-action prev-score" id="btn-prev-score" style="display:none">+ Score précédent</button>
+      <button class="btn-action correct" id="btn-correct">✎ Corriger</button>
       <button class="btn-action" id="calc-reset-btn">Réinitialiser</button>
+      <button class="btn-action zero" id="btn-zero">✕ Zéro</button>
+      <button class="btn-action prev-score" id="btn-prev-score" style="display:none">+ Score précédent</button>
     </div>
     <button class="calc-toggle-btn" id="calc-toggle">
       <span>🎲 Calculateur de points</span>
       <span class="calc-total" id="calc-total-label">0 pts</span>
     </button>
-    <div id="calc-area" style="display:none">
-      <div class="calc-grid" id="calc-grid"></div>
-    </div>
+    <div id="calc-area" style="display:none"></div>
   </div>
 </div>
 
-<!-- ── CLASSEMENT ── -->
+<!-- CLASSEMENT -->
 <div class="overlay" id="classement-overlay" style="display:none">
   <div class="popup">
     <h3>🏅 Classement</h3>
@@ -194,7 +200,7 @@
   </div>
 </div>
 
-<!-- ── WINNER ── -->
+<!-- WINNER -->
 <div class="winner-overlay" id="winner-overlay" style="display:none">
   <div class="winner-popup">
     <div class="winner-title">🏆 Fin de partie</div>
@@ -206,7 +212,7 @@
   </div>
 </div>
 
-<!-- ── REMATCH ── -->
+<!-- REMATCH -->
 <div class="rematch-overlay" id="rematch-overlay" style="display:none">
   <div class="rematch-popup">
     <h2>Rejouer</h2>
@@ -216,7 +222,7 @@
   </div>
 </div>
 
-<!-- ── ALERT ── -->
+<!-- ALERT -->
 <div class="alert-overlay" id="alert-overlay" style="display:none">
   <div class="alert-box">
     <h3>⚠️ Attention !</h3>
@@ -225,19 +231,37 @@
   </div>
 </div>
 
-<!-- ── CONFIRM NOUVELLE PARTIE ── -->
-<div class="alert-overlay" id="confirm-overlay" style="display:none">
-  <div class="alert-box" style="border-color:var(--border)">
-    <h3 style="color:var(--accent)">Nouvelle partie</h3>
+<!-- CONFIRM -->
+<div class="confirm-overlay" id="confirm-overlay" style="display:none">
+  <div class="confirm-box">
+    <h3>Nouvelle partie</h3>
     <p>Toutes les données de la partie en cours seront supprimées. Continuer ?</p>
-    <div style="display:flex;gap:.6rem;justify-content:center">
-      <button id="confirm-cancel" style="background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;padding:.65rem 1.2rem;font-size:.9rem;cursor:pointer;">Annuler</button>
-      <button id="confirm-ok" style="background:var(--accent);color:#111;border:none;border-radius:6px;padding:.65rem 1.2rem;font-size:.9rem;font-weight:700;cursor:pointer;">Confirmer</button>
+    <div class="confirm-btns">
+      <button class="confirm-cancel-btn" id="confirm-cancel">Annuler</button>
+      <button class="confirm-ok-btn" id="confirm-ok">Confirmer</button>
     </div>
   </div>
 </div>
 
 <script>
+// ── SOUND ──
+function playZeroSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Pouet : descente rapide de fréquence
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(520, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.35);
+    gain.gain.setValueAtTime(0.35, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
 // ── DICE SVG ──
 function diceSVG(n) {
   const DOT = (x,y) => `<circle cx="${x}" cy="${y}" r="1.8" fill="#e8d5a3"/>`;
@@ -251,24 +275,57 @@ function diceSVG(n) {
   return `<svg width="18" height="18" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect x="1" y="1" width="18" height="18" rx="3.5" fill="#1a1a1a" stroke="#555" stroke-width="1.2"/>${dots}</svg>`;
 }
 
-// ── COMBOS ──
-const COMBO = [
-  {mult:1,die:5,pts:50},{mult:1,die:1,pts:100},
-  {mult:3,die:2,pts:200},{mult:3,die:3,pts:300},{mult:3,die:4,pts:400},
-  {mult:3,die:5,pts:500},{mult:3,die:6,pts:600},{mult:3,die:1,pts:1000},
-  {mult:4,die:2,pts:400},{mult:4,die:3,pts:600},{mult:4,die:4,pts:800},
-  {mult:4,die:5,pts:1000},{mult:4,die:6,pts:1200},{mult:4,die:1,pts:2000},
-  {mult:5,die:2,pts:800},{mult:5,die:3,pts:1200},{mult:5,die:4,pts:1600},
-  {mult:5,die:5,pts:2000},{mult:5,die:6,pts:2400},{mult:5,die:1,pts:4000},
-  {label:'Suite',pts:1000},
+// ── CALC SECTIONS ──
+const SECTIONS = [
+  { label: 'Divers', combos: [
+    {mult:1, die:5, pts:50},
+    {mult:1, die:1, pts:100},
+    {label:'Suite', pts:1000},
+  ]},
+  { label: 'Triple', combos: [
+    {mult:3,die:2,pts:200},{mult:3,die:3,pts:300},{mult:3,die:4,pts:400},
+    {mult:3,die:5,pts:500},{mult:3,die:6,pts:600},{mult:3,die:1,pts:1000},
+  ]},
+  { label: 'Quadruple', combos: [
+    {mult:4,die:2,pts:400},{mult:4,die:3,pts:600},{mult:4,die:4,pts:800},
+    {mult:4,die:5,pts:1000},{mult:4,die:6,pts:1200},{mult:4,die:1,pts:2000},
+  ]},
+  { label: 'Quintuple', combos: [
+    {mult:5,die:2,pts:800},{mult:5,die:3,pts:1200},{mult:5,die:4,pts:1600},
+    {mult:5,die:5,pts:2000},{mult:5,die:6,pts:2400},{mult:5,die:1,pts:4000},
+  ]},
 ];
 
 // ── STATE ──
 let players=[], scores=[], bars=[], currentPlayer=0, currentTurn=0;
 let calcScore=0, gameOver=false, prevPlayerIdx=-1, prevUsed=false;
-let originalPlayers=[];
-// playerBadges[i] indexed on originalPlayers
-let playerBadges=[];
+let originalPlayers=[], playerBadges=[];
+let canCorrect=false; // vrai si au moins 1 tour a été joué
+
+// ── SAVE / RESTORE (localStorage) ──
+const SAVE_KEY = 'schmich_state';
+function saveState() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      players, scores, bars, currentPlayer, currentTurn,
+      gameOver, prevPlayerIdx, prevUsed, originalPlayers, playerBadges, canCorrect
+    }));
+  } catch(e) {}
+}
+function clearState() { try { localStorage.removeItem(SAVE_KEY); } catch(e) {} }
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    players=s.players; scores=s.scores; bars=s.bars;
+    currentPlayer=s.currentPlayer; currentTurn=s.currentTurn;
+    gameOver=s.gameOver; prevPlayerIdx=s.prevPlayerIdx; prevUsed=s.prevUsed;
+    originalPlayers=s.originalPlayers; playerBadges=s.playerBadges;
+    canCorrect=s.canCorrect||false;
+    return true;
+  } catch(e) { return false; }
+}
 
 // ── HELPERS ──
 function getTotal(pi){ return scores[pi].reduce((a,b)=>a+b,0); }
@@ -278,12 +335,38 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-function badgesFor(origIdx){
-  const b = playerBadges[origIdx]||{crowns:0,sads:0};
+function badgesFor(oi){
+  const b=playerBadges[oi]||{crowns:0,sads:0};
   return (b.crowns?'👑'.repeat(b.crowns):'')+(b.sads?'😔'.repeat(b.sads):'');
 }
-// Map current players[] index → originalPlayers index
 function origIdx(pi){ return originalPlayers.indexOf(players[pi]); }
+
+// ── BUILD CALC ──
+function buildCalc() {
+  const area = document.getElementById('calc-area');
+  area.innerHTML = '';
+  SECTIONS.forEach(sec => {
+    const wrap = document.createElement('div');
+    wrap.className = 'calc-section';
+    wrap.innerHTML = `<div class="calc-section-label">${sec.label}</div>`;
+    const g = document.createElement('div');
+    g.className = 'calc-grid';
+    sec.combos.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'calc-btn';
+      if (c.label) {
+        btn.innerHTML = `<span class="label-part">${c.label}</span><span class="pts">+${c.pts}</span>`;
+      } else {
+        const dices = Array.from({length:c.mult},()=>diceSVG(c.die)).join('');
+        btn.innerHTML = `<span class="dice-wrap">${dices}</span><span class="pts">+${c.pts}</span>`;
+      }
+      btn.onclick = () => { calcScore += c.pts; syncCalc(); };
+      g.appendChild(btn);
+    });
+    wrap.appendChild(g);
+    area.appendChild(wrap);
+  });
+}
 
 // ── SETUP ──
 function initSetupRows(names){
@@ -301,6 +384,7 @@ function addPlayerRow(name=''){
   list.appendChild(row);
 }
 
+// ── EVENTS ──
 document.getElementById('btn-add-player').onclick=()=>addPlayerRow();
 document.getElementById('btn-start').onclick=()=>{
   const inputs=document.querySelectorAll('#players-list input');
@@ -310,9 +394,9 @@ document.getElementById('btn-start').onclick=()=>{
   playerBadges=names.map(()=>({crowns:0,sads:0}));
   startGame(names);
 };
-document.getElementById('btn-new-game').onclick=()=>showConfirm(()=>{ showScreen('setup'); initSetupRows(); });
-document.getElementById('btn-new-game-winner').onclick=()=>{ hideOverlay('winner-overlay'); showScreen('setup'); initSetupRows(); };
-document.getElementById('btn-cancel-rematch').onclick=()=>{ hideOverlay('rematch-overlay'); };
+document.getElementById('btn-new-game').onclick=()=>showConfirm(()=>{ clearState(); showScreen('setup'); initSetupRows(); });
+document.getElementById('btn-new-game-winner').onclick=()=>{ hideOverlay('winner-overlay'); clearState(); showScreen('setup'); initSetupRows(); };
+document.getElementById('btn-cancel-rematch').onclick=()=>hideOverlay('rematch-overlay');
 document.getElementById('btn-classement').onclick=showClassement;
 document.getElementById('classement-close').onclick=()=>hideOverlay('classement-overlay');
 document.getElementById('classement-overlay').onclick=e=>{ if(e.target===document.getElementById('classement-overlay')) hideOverlay('classement-overlay'); };
@@ -320,10 +404,178 @@ document.getElementById('alert-ok').onclick=()=>hideOverlay('alert-overlay');
 document.getElementById('confirm-cancel').onclick=()=>hideOverlay('confirm-overlay');
 document.getElementById('confirm-ok').onclick=()=>{ hideOverlay('confirm-overlay'); confirmCallback&&confirmCallback(); };
 
+document.getElementById('calc-reset-btn').onclick=resetCalc;
+document.getElementById('calc-toggle').onclick=()=>{
+  const a=document.getElementById('calc-area');
+  a.style.display=a.style.display==='none'?'block':'none';
+};
+document.getElementById('manual-input').addEventListener('input',e=>{
+  const v=parseInt(e.target.value,10);
+  calcScore=isNaN(v)?0:v;
+  document.getElementById('calc-total-label').textContent=calcScore+' pts';
+  clearError();
+});
+document.getElementById('manual-input').addEventListener('keydown',e=>{ if(e.key==='Enter') validateTurn(); });
+document.getElementById('btn-validate').onclick=validateTurn;
+
+document.getElementById('btn-zero').onclick=()=>{
+  playZeroSound();
+  calcScore=0;
+  document.getElementById('manual-input').value='0';
+  document.getElementById('calc-total-label').textContent='0 pts';
+  clearError();
+  validateTurn();
+};
+
+document.getElementById('btn-prev-score').onclick=function(){
+  if(prevUsed||prevPlayerIdx<0) return;
+  const prev=scores[prevPlayerIdx][scores[prevPlayerIdx].length-1]??0;
+  if(prev<=0) return;
+  prevUsed=true; this.disabled=true;
+  calcScore+=prev; syncCalc();
+};
+
+document.getElementById('btn-correct').onclick=()=>{
+  if(!canCorrect) return;
+  // Revenir au joueur précédent
+  let prevP = currentPlayer - 1;
+  if(prevP < 0){ prevP = players.length - 1; currentTurn--; }
+  // Retirer le dernier score de ce joueur
+  const removed = scores[prevP].pop();
+  // Restaurer ses barres : si ce score était 0, retirer une barre; si c'était un reset (négatif), on ne peut pas récupérer l'état exact → on remet 0 barres
+  if(removed === 0){
+    if(bars[prevP] > 0) bars[prevP]--;
+  } else if(removed < 0){
+    // était un reset : total avant = -removed, on ne remet pas le score mais on nettoie les barres
+    bars[prevP] = 0;
+    const resetScore = scores[prevP].reduce((a,b)=>a+b,0);
+    // rien d'autre à faire, le score précédent est déjà là
+  } else {
+    bars[prevP] = 0;
+  }
+  currentPlayer = prevP;
+  prevPlayerIdx = prevP > 0 ? prevP - 1 : (currentTurn >= 0 ? players.length - 1 : -1);
+  prevUsed = false;
+  canCorrect = false;
+  resetCalc();
+  document.getElementById('calc-area').style.display='none';
+  clearError();
+  renderTable(); renderEntryPanel(); scrollToCurrentCol();
+  saveState();
+};
+
 let confirmCallback=null;
 function showConfirm(cb){ confirmCallback=cb; showOverlay('confirm-overlay'); }
 
-// ── REMATCH ──
+// ── CALC HELPERS ──
+function syncCalc(){
+  document.getElementById('manual-input').value=calcScore;
+  document.getElementById('calc-total-label').textContent=calcScore+' pts';
+}
+function resetCalc(){
+  calcScore=0; prevUsed=false;
+  document.getElementById('btn-prev-score').disabled=false;
+  document.getElementById('manual-input').value='';
+  document.getElementById('calc-total-label').textContent='0 pts';
+  clearError();
+}
+function clearError(){
+  document.getElementById('error-msg').textContent='';
+  document.getElementById('manual-input').classList.remove('error');
+}
+
+// ── GAME ──
+function startGame(names){
+  players=[...names];
+  scores=players.map(()=>[]);
+  bars=players.map(()=>0);
+  currentPlayer=0; currentTurn=0; gameOver=false; prevPlayerIdx=-1; prevUsed=false; canCorrect=false;
+  resetCalc();
+  document.getElementById('calc-area').style.display='none';
+  showScreen('game');
+  renderTable(); renderEntryPanel();
+  saveState();
+}
+
+function validateTurn(isZero=false){
+  if(gameOver) return;
+  const raw=document.getElementById('manual-input').value.trim();
+  const pts=parseInt(raw,10);
+  if(isNaN(pts)||pts<0){
+    showError('Veuillez saisir un score valide.'); return;
+  }
+  if(pts>0 && pts%50!==0){
+    showError('Le score doit être un multiple de 50.'); return;
+  }
+
+  clearError();
+
+  if(pts===0){
+    playZeroSound();
+    bars[currentPlayer]++;
+    if(bars[currentPlayer]>2){
+      bars[currentPlayer]=0;
+      const total=getTotal(currentPlayer);
+      scores[currentPlayer].push(total>0?-total:0);
+    } else { scores[currentPlayer].push(0); }
+  } else {
+    bars[currentPlayer]=0;
+    scores[currentPlayer].push(pts);
+  }
+
+  prevPlayerIdx=currentPlayer; prevUsed=false; canCorrect=true;
+  resetCalc();
+  document.getElementById('calc-area').style.display='none';
+  currentPlayer=(currentPlayer+1)%players.length;
+  if(currentPlayer===0) currentTurn++;
+  if(currentPlayer===0 && checkEndGame()) return;
+  renderTable();
+  if(bars[currentPlayer]===2) showAlert(`<strong>${players[currentPlayer]}</strong> a déjà 2 barres !<br>Sans point ce tour → retour à 0.`);
+  renderEntryPanel(); scrollToCurrentCol();
+  saveState();
+}
+
+function showError(msg){
+  document.getElementById('error-msg').textContent=msg;
+  document.getElementById('manual-input').classList.add('error');
+}
+
+function checkEndGame(){
+  if(currentPlayer!==0) return false;
+  const totals=players.map((_,i)=>getTotal(i));
+  if(Math.max(...totals)<5000) return false;
+  const winnerIdx=totals.indexOf(Math.max(...totals));
+  assignBadges(totals,winnerIdx);
+  showWinner(winnerIdx,totals);
+  clearState();
+  return true;
+}
+
+function assignBadges(totals,winnerIdx){
+  const max=totals[winnerIdx], min=Math.min(...totals);
+  players.forEach((name,i)=>{
+    const oi=originalPlayers.indexOf(name);
+    if(oi<0) return;
+    if(totals[i]===max) playerBadges[oi].crowns++;
+    if(totals[i]===min) playerBadges[oi].sads++;
+  });
+}
+
+function getTotal(pi){ return scores[pi].reduce((a,b)=>a+b,0); }
+
+function showWinner(idx,totals){
+  gameOver=true;
+  const max=totals[idx], min=Math.min(...totals);
+  const ranking=players.map((n,i)=>({n,pts:totals[i],i})).sort((a,b)=>b.pts-a.pts||a.i-b.i);
+  document.getElementById('winner-name').textContent=players[idx];
+  document.getElementById('winner-score-text').textContent=`${totals[idx]} points`;
+  document.getElementById('rankings').innerHTML=ranking.map((p,ri)=>{
+    const badge=p.pts===max?' 👑':(p.pts===min?' 😔':'');
+    return `<div class="rank-row"><span class="rank-num">${ri+1}</span><span class="rank-name">${p.n}${badge}</span><span class="rank-pts">${p.pts} pts</span></div>`;
+  }).join('');
+  showOverlay('winner-overlay');
+}
+
 document.getElementById('btn-rematch').onclick=()=>{
   hideOverlay('winner-overlay');
   const list=document.getElementById('first-player-list');
@@ -344,130 +596,15 @@ document.getElementById('btn-rematch').onclick=()=>{
   showOverlay('rematch-overlay');
 };
 
-// ── CALC ──
-const grid=document.getElementById('calc-grid');
-COMBO.forEach(c=>{
-  const btn=document.createElement('button');
-  btn.className='calc-btn';
-  if(c.label){
-    btn.innerHTML=`<span class="label-part">${c.label}</span><span class="pts">+${c.pts}</span>`;
-  } else {
-    const dices=Array.from({length:c.mult},()=>diceSVG(c.die)).join('');
-    btn.innerHTML=`<span class="dice-wrap">${dices}</span><span class="pts">+${c.pts}</span>`;
-  }
-  btn.onclick=()=>{ calcScore+=c.pts; syncCalc(); };
-  grid.appendChild(btn);
-});
-document.getElementById('calc-reset-btn').onclick=resetCalc;
-document.getElementById('calc-toggle').onclick=()=>{
-  const a=document.getElementById('calc-area');
-  a.style.display=a.style.display==='none'?'block':'none';
-};
-document.getElementById('manual-input').addEventListener('input',e=>{
-  const v=parseInt(e.target.value,10);
-  calcScore=isNaN(v)?0:v;
-  document.getElementById('calc-total-label').textContent=calcScore+' pts';
-});
-document.getElementById('manual-input').addEventListener('keydown',e=>{ if(e.key==='Enter') validateTurn(); });
-document.getElementById('btn-validate').onclick=validateTurn;
-document.getElementById('btn-prev-score').onclick=function(){
-  if(prevUsed||prevPlayerIdx<0) return;
-  const prev=scores[prevPlayerIdx][scores[prevPlayerIdx].length-1]??0;
-  if(prev<=0) return;
-  prevUsed=true; this.disabled=true;
-  calcScore+=prev; syncCalc();
-};
-
-function syncCalc(){
-  document.getElementById('manual-input').value=calcScore;
-  document.getElementById('calc-total-label').textContent=calcScore+' pts';
-}
-function resetCalc(){
-  calcScore=0; prevUsed=false;
-  document.getElementById('btn-prev-score').disabled=false;
-  document.getElementById('manual-input').value='';
-  document.getElementById('calc-total-label').textContent='0 pts';
-}
-
-// ── GAME ──
-function startGame(names){
-  players=[...names];
-  scores=players.map(()=>[]);
-  bars=players.map(()=>0);
-  currentPlayer=0; currentTurn=0; gameOver=false; prevPlayerIdx=-1; prevUsed=false;
-  resetCalc();
-  document.getElementById('calc-area').style.display='none';
-  showScreen('game');
-  renderTable(); renderEntryPanel();
-}
-
-function validateTurn(){
-  if(gameOver) return;
-  const raw=document.getElementById('manual-input').value.trim();
-  const pts=parseInt(raw,10);
-  if(isNaN(pts)||pts<0) return;
-
-  if(pts===0){
-    bars[currentPlayer]++;
-    if(bars[currentPlayer]>2){
-      bars[currentPlayer]=0;
-      const total=getTotal(currentPlayer);
-      scores[currentPlayer].push(total>0?-total:0);
-    } else { scores[currentPlayer].push(0); }
-  } else {
-    bars[currentPlayer]=0;
-    scores[currentPlayer].push(pts);
-  }
-
-  prevPlayerIdx=currentPlayer; prevUsed=false; resetCalc();
-  document.getElementById('calc-area').style.display='none';
-  currentPlayer=(currentPlayer+1)%players.length;
-  if(currentPlayer===0) currentTurn++;
-  if(currentPlayer===0 && checkEndGame()) return;
-  renderTable();
-  if(bars[currentPlayer]===2) showAlert(`<strong>${players[currentPlayer]}</strong> a déjà 2 barres !<br>Sans point ce tour → retour à 0.`);
-  renderEntryPanel();
-  scrollToCurrentCol();
-}
-
-function checkEndGame(){
-  if(currentPlayer!==0) return false;
-  const totals=players.map((_,i)=>getTotal(i));
-  if(Math.max(...totals)<5000) return false;
-  const winnerIdx=totals.indexOf(Math.max(...totals));
-  assignBadges(totals,winnerIdx);
-  showWinner(winnerIdx,totals);
-  return true;
-}
-
-function assignBadges(totals,winnerIdx){
-  const max=totals[winnerIdx], min=Math.min(...totals);
-  players.forEach((name,i)=>{
-    const oi=originalPlayers.indexOf(name);
-    if(oi<0) return;
-    if(totals[i]===max) playerBadges[oi].crowns++;
-    if(totals[i]===min) playerBadges[oi].sads++;
-  });
-}
-
-function showWinner(idx,totals){
-  gameOver=true;
-  const max=totals[idx], min=Math.min(...totals);
-  const ranking=players.map((n,i)=>({n,pts:totals[i],i})).sort((a,b)=>b.pts-a.pts||a.i-b.i);
-  document.getElementById('winner-name').textContent=players[idx];
-  document.getElementById('winner-score-text').textContent=`${totals[idx]} points`;
-  document.getElementById('rankings').innerHTML=ranking.map((p,ri)=>{
-    const badge=p.pts===max?' 👑':(p.pts===min?' 😔':'');
-    return `<div class="rank-row"><span class="rank-num">${ri+1}</span><span class="rank-name">${p.n}${badge}</span><span class="rank-pts">${p.pts} pts</span></div>`;
-  }).join('');
-  showOverlay('winner-overlay');
-}
-
 function renderEntryPanel(){
   document.getElementById('current-player-label').textContent=players[currentPlayer];
   document.getElementById('turn-info').textContent=`Tour ${currentTurn+1}`;
+  // Bouton corriger
+  const bc=document.getElementById('btn-correct');
+  bc.disabled=!canCorrect;
+  // Bouton score précédent
   const pb=document.getElementById('btn-prev-score');
-  if(prevPlayerIdx>=0 && scores[prevPlayerIdx].length>0){
+  if(prevPlayerIdx>=0&&scores[prevPlayerIdx].length>0){
     const prev=scores[prevPlayerIdx][scores[prevPlayerIdx].length-1];
     if(prev>0){ pb.style.display='inline-block'; pb.textContent=`+ Score précédent (+${prev})`; pb.disabled=prevUsed; }
     else pb.style.display='none';
@@ -483,8 +620,7 @@ function renderTable(){
   const numCols=currentTurn+(currentPlayer>0?1:0)+1;
   let html=`<thead><tr><th class="col-header">Joueur</th>`;
   for(let t=0;t<numCols;t++){
-    const cur=t===currentTurn&&!gameOver;
-    html+=`<th class="tour-header${cur?' current-col':''}">T${t+1}</th>`;
+    html+=`<th class="tour-header${t===currentTurn&&!gameOver?' current-col':''}">T${t+1}</th>`;
   }
   html+='</tr></thead><tbody>';
   players.forEach((p,pi)=>{
@@ -502,7 +638,7 @@ function renderTable(){
         const total=scores[pi].slice(0,t+1).reduce((a,b)=>a+b,0);
         const tl=turn>0?`+${turn}`:(turn<0?`${turn}`:'0');
         html+=`<td class="score-cell${isActive?' active-row':''}"><span class="turn-pts${turn===0?' zero':''}">${tl}</span><span class="total-pts${total>=5000?' win':''}">${total}</span></td>`;
-      } else if(pi===currentPlayer&&t===currentTurn&&!gameOver){
+      } else if(isActive&&t===currentTurn){
         html+=`<td class="pending active-row">…</td>`;
       } else { html+=`<td class="empty">—</td>`; }
     }
@@ -516,7 +652,7 @@ function scrollToCurrentCol(){ const w=document.getElementById('table-wrap'); w.
 
 function showClassement(){
   const totals=players.map((_,i)=>getTotal(i));
-  const sorted=players.map((n,i)=>({n,pts:totals[i],b:bars[i],i})).sort((a,b)=>b.pts-a.pts||a.i-b.i);
+  const sorted=players.map((n,i)=>({n,pts:totals[i],b:bars[i]})).sort((a,b)=>b.pts-a.pts);
   document.getElementById('classement-list').innerHTML=sorted.map((p,ri)=>{
     const bHtml=p.b>0?`<span style="color:${p.b===2?'var(--red)':'var(--bar-color)'};font-weight:700;margin-left:.3rem">${'|'.repeat(p.b)}</span>`:'';
     return `<div class="rank-row"><span class="rank-num">${ri+1}</span><span class="rank-name">${p.n}${bHtml}</span><span class="rank-pts">${p.pts} pts</span></div>`;
@@ -529,7 +665,14 @@ function showClassement(){
 
 function showAlert(msg){ document.getElementById('alert-msg').innerHTML=msg; showOverlay('alert-overlay'); }
 
-initSetupRows();
+// ── INIT ──
+buildCalc();
+if(loadState()&&!gameOver){
+  showScreen('game');
+  renderTable(); renderEntryPanel(); scrollToCurrentCol();
+} else {
+  initSetupRows();
+}
 </script>
 </body>
 </html>
