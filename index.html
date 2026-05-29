@@ -199,7 +199,7 @@
       </button>
     </div>
   </div>
-  <div id="error-msg" class="error-msg"></div>
+  <div id="error-msg"></div>
   <div class="table-wrap" id="table-wrap"><table id="score-table"></table></div>
   <div class="entry-panel">
     <div class="entry-top">
@@ -320,8 +320,13 @@
   </div>
 </div>
 
+<div id="toast"></div>
+<div id="toast"></div>
 <script>
 // ── PREFS (son + thème) ──
+var toast=document.createElement('div');
+toast.style.cssText='position:fixed;top:72px;left:50%;transform:translateX(-50%) scale(.85);background:#c0392b;color:#fff;padding:.6rem 1.4rem;border-radius:24px;font-size:.85rem;font-weight:600;z-index:99999;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);display:none;opacity:0;transition:opacity .18s ease,transform .18s ease;';
+document.body.appendChild(toast);
 var PREF_KEY='schmich_prefs';
 var prefs={sound:true,light:false};
 function loadPrefs(){try{var r=localStorage.getItem(PREF_KEY);if(r){var p=JSON.parse(r);prefs.sound=p.sound!==false;prefs.light=!!p.light;}}catch(e){}}
@@ -352,7 +357,7 @@ var SECTIONS=[
   {label:'Divers',cols:6,combos:[{die:5,pts:50},{die:1,pts:100},{label:'Suite',pts:1000}]},
   {label:'Triple ×3',cols:6,combos:[{die:1,pts:1000},{die:2,pts:200},{die:3,pts:300},{die:4,pts:400},{die:5,pts:500},{die:6,pts:600}]},
   {label:'Quadruple ×4',cols:6,combos:[{die:1,pts:2000},{die:2,pts:400},{die:3,pts:600},{die:4,pts:800},{die:5,pts:1000},{die:6,pts:1200}]},
-  {label:'Quintuple ×5',cols:6,combos:[{die:1,pts:4000},{die:2,pts:800},{die:3,pts:1200},{die:4,pts:1600},{die:5,pts:2000},{die:6,pts:2400}],extra:4},
+  {label:'Quintuple ×5',cols:6,combos:[{die:1,pts:4000},{die:2,pts:800},{die:3,pts:1200},{die:4,pts:1600},{die:5,pts:2000},{die:6,pts:2400}],extra:6},
 ];
 
 // ── STATE ──
@@ -374,8 +379,31 @@ function hideOverlay(id){document.getElementById(id).style.display='none';}
 function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
 function badgesFor(oi){var b=playerBadges[oi]||{crowns:0,sads:0};return (b.crowns?'👑'.repeat(b.crowns):'')+(b.sads?'😔'.repeat(b.sads):'');}
 function origIdx(pi){return originalPlayers.indexOf(players[pi]);}
-function clearError(){document.getElementById('error-msg').textContent='';document.getElementById('manual-input').classList.remove('error');}
-function showError(msg){document.getElementById('error-msg').textContent=msg;document.getElementById('manual-input').classList.add('error');}
+var toastTimer=null;
+function clearError(){document.getElementById('manual-input').classList.remove('error');}
+function showError(msg){
+  if(toastTimer){clearTimeout(toastTimer);toastTimer=null;}
+  toast.textContent=msg;
+  toast.style.display='block';
+  toast.style.opacity='0';
+  toast.style.transform='translateX(-50%) scale(.85)';
+  document.getElementById('manual-input').classList.add('error');
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      toast.style.opacity='1';
+      toast.style.transform='translateX(-50%) scale(1)';
+      toastTimer=setTimeout(function(){
+        toast.style.opacity='0';
+        toast.style.transform='translateX(-50%) scale(.85)';
+        toastTimer=setTimeout(function(){
+          toast.style.display='none';
+          clearError();
+          toastTimer=null;
+        },200);
+      },2000);
+    });
+  });
+}
 function showAlert(msg){document.getElementById('alert-msg').innerHTML=msg;showOverlay('alert-overlay');}
 function showConfirm(cb){confirmCallback=cb;showOverlay('confirm-overlay');}
 
@@ -549,6 +577,12 @@ document.getElementById('toggle-light').checked=prefs.light;
 buildCalc();
 if(loadState()&&!gameOver){showScreen('game');renderTable();renderEntryPanel();scrollToCurrentCol();}
 else{initSetupRows();}
+// Créer le toast dynamiquement pour être sûr qu'il existe
+(function(){
+  var t=document.createElement('div');
+  t.id='toast';
+  document.body.appendChild(t);
+})();
 </script>
 </body>
 </html>
