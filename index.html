@@ -5,141 +5,167 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Schmich</title>
 <style>
-  :root {
-    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424; --border: #2e2e2e;
-    --accent: #e8d5a3; --accent2: #c9b07a; --text: #f0f0f0; --text-muted: #888;
-    --red: #e05252; --green: #52c97a; --bar-color: #e8a03a; --radius: 10px;
-    --font: 'Segoe UI', system-ui, sans-serif;
+  :root{
+    --bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:#2e2e2e;
+    --accent:#e8d5a3;--accent2:#c9b07a;--text:#f0f0f0;--text-muted:#888;
+    --red:#e05252;--green:#52c97a;--bar-color:#e8a03a;--radius:10px;
+    --font:'Segoe UI',system-ui,sans-serif;
+    --shadow:0 4px 24px rgba(0,0,0,.5);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); overflow: hidden; height: 100vh; }
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  input[type=number] { -moz-appearance: textfield; }
+  body.light{
+    --bg:#f5f2ec;--surface:#ffffff;--surface2:#ede9e0;--border:#d6d0c4;
+    --text:#1a1a1a;--text-muted:#777;--shadow:0 4px 24px rgba(0,0,0,.15);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;height:100vh;transition:background .25s,color .25s;}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+  input[type=number]{-moz-appearance:textfield;}
+  .screen{display:none;position:fixed;inset:0;overflow-y:auto;background:var(--bg);z-index:1;}
+  .screen.active{display:block;}
+  #game{display:none;flex-direction:column;overflow:hidden;height:100vh;}
+  #game.active{display:flex;}
+  #setup{display:flex;flex-direction:column;}
+  #setup.active{display:flex;}
 
-  .screen { display: none; position: fixed; inset: 0; overflow-y: auto; background: var(--bg); z-index: 1; }
-  .screen.active { display: block; }
-  #game { display: none; flex-direction: column; overflow: hidden; }
-  #game.active { display: flex; }
+  .setup-header{text-align:center;padding:2rem 1rem 1.5rem;}
+  .setup-header h1{font-size:2.2rem;font-weight:300;letter-spacing:.28em;color:var(--accent);text-transform:uppercase;}
+  .setup-header p{color:var(--text-muted);font-size:.75rem;letter-spacing:.12em;margin-top:.3rem;}
+  .setup-inner{max-width:480px;margin:0 auto;padding:0 1rem 5rem;width:100%;}
+  .setup-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;}
+  .setup-card h2{font-size:.78rem;font-weight:400;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.2rem;}
+  #players-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;}
+  .player-input-row{display:flex;gap:.5rem;align-items:center;}
+  .player-input-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.7rem .9rem;font-size:1rem;font-family:var(--font);outline:none;}
+  .player-input-row input:focus{border-color:var(--accent2);}
+  .btn-remove{background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);width:36px;height:36px;cursor:pointer;font-size:1.1rem;flex-shrink:0;}
+  .btn-add{background:none;border:1px dashed var(--border);border-radius:6px;color:var(--text-muted);padding:.7rem;cursor:pointer;font-size:.85rem;width:100%;margin-bottom:.5rem;}
+  .btn-primary{width:100%;padding:.9rem;margin-top:.8rem;background:var(--accent);color:#111;border:none;border-radius:6px;font-size:1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;}
+  .btn-secondary-full{width:100%;padding:.9rem;margin-top:.6rem;background:none;color:var(--text-muted);border:1px solid var(--border);border-radius:6px;font-size:1rem;cursor:pointer;}
+  .setup-note{color:var(--text-muted);font-size:.75rem;text-align:center;margin-top:.6rem;}
 
-  /* SETUP */
-  #setup { display: flex; flex-direction: column; }
-  #setup.active { display: flex; }
-  .setup-header { text-align: center; padding: 2rem 1rem 1.5rem; }
-  .setup-header h1 { font-size: 2.2rem; font-weight: 300; letter-spacing: .28em; color: var(--accent); text-transform: uppercase; }
-  .setup-header p { color: var(--text-muted); font-size: .75rem; letter-spacing: .12em; margin-top: .3rem; }
-  .setup-inner { max-width: 480px; margin: 0 auto; padding: 0 1rem 5rem; width: 100%; }
-  .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
-  .setup-card h2 { font-size: .78rem; font-weight: 400; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1.2rem; }
-  #players-list { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
-  .player-input-row { display: flex; gap: .5rem; align-items: center; }
-  .player-input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .7rem .9rem; font-size: 1rem; font-family: var(--font); outline: none; }
-  .player-input-row input:focus { border-color: var(--accent2); }
-  .btn-remove { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); width: 36px; height: 36px; cursor: pointer; font-size: 1.1rem; flex-shrink: 0; }
-  .btn-add { background: none; border: 1px dashed var(--border); border-radius: 6px; color: var(--text-muted); padding: .7rem; cursor: pointer; font-size: .85rem; width: 100%; margin-bottom: .5rem; }
-  .btn-primary { width: 100%; padding: .9rem; margin-top: .8rem; background: var(--accent); color: #111; border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
-  .btn-secondary-full { width: 100%; padding: .9rem; margin-top: .6rem; background: none; color: var(--text-muted); border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; cursor: pointer; }
-  .setup-note { color: var(--text-muted); font-size: .75rem; text-align: center; margin-top: .6rem; }
+  .game-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem .8rem;border-bottom:1px solid var(--border);flex-shrink:0;gap:.5rem;}
+  .turn-info{color:var(--accent);font-size:.9rem;font-weight:600;}
+  .header-btns{display:flex;gap:.5rem;}
+  .btn-sm{background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);padding:.4rem .7rem;font-size:.75rem;cursor:pointer;white-space:nowrap;}
+  .btn-sm.accent{border-color:var(--accent2);color:var(--accent);font-weight:600;}
+  .btn-icon{background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .btn-icon svg{width:16px;height:16px;}
 
-  /* GAME HEADER */
-  .game-header { display: flex; justify-content: space-between; align-items: center; padding: .6rem 1rem; border-bottom: 1px solid var(--border); flex-shrink: 0; gap: .5rem; }
-  .turn-info { color: var(--accent); font-size: .9rem; font-weight: 600; }
-  .header-btns { display: flex; gap: .5rem; }
-  .btn-sm { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); padding: .4rem .7rem; font-size: .75rem; cursor: pointer; white-space: nowrap; }
-  .btn-sm.accent { border-color: var(--accent2); color: var(--accent); font-weight: 600; }
+  .table-wrap{flex:1 1 auto;overflow:auto;padding:.4rem;}
+  table{border-collapse:collapse;white-space:nowrap;}
+  th.col-header{text-align:left;padding:.4rem .5rem;font-size:.84rem;color:var(--text-muted);font-weight:400;position:sticky;left:0;background:var(--bg);z-index:3;min-width:90px;}
+  th.tour-header{color:var(--text-muted);font-size:.84rem;font-weight:400;padding:.4rem .4rem;text-align:center;min-width:68px;}
+  th.tour-header.current-col{color:var(--accent);}
+  td.player-name-td{text-align:left;padding:.4rem .5rem;position:sticky;left:0;background:var(--bg);z-index:1;font-size:.95rem;line-height:1.3;}
+  td.player-name-td.active-row{background:var(--surface);color:var(--accent);font-weight:600;}
+  .player-name-main{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;}
+  .bars-badge{font-size:.8rem;color:var(--bar-color);font-weight:700;}
+  .bars-badge.danger{color:var(--red);}
+  td.score-cell{text-align:center;padding:.4rem .45rem;font-size:.9rem;cursor:pointer;}
+  td.score-cell:hover .total-pts{text-decoration:underline;text-decoration-style:dotted;}
+  td.score-cell.active-row{background:var(--surface2);}
+  .turn-pts{color:var(--text-muted);font-size:.76rem;display:block;}
+  .turn-pts.zero{color:var(--bar-color);}
+  .total-pts{font-weight:600;font-size:.92rem;display:block;}
+  .total-pts.win{color:var(--green);}
+  td.pending{color:var(--text-muted);font-size:.75rem;text-align:center;}
+  td.empty{color:var(--border);text-align:center;font-size:.75rem;}
 
-  /* TABLE */
-  .table-wrap { flex: 1 1 auto; overflow: auto; padding: .5rem; }
-  table { border-collapse: collapse; white-space: nowrap; }
-  th.col-header { text-align: left; padding: .45rem .6rem; font-size: .7rem; color: var(--text-muted); font-weight: 400; position: sticky; left: 0; background: var(--bg); z-index: 3; min-width: 90px; }
-  th.tour-header { color: var(--text-muted); font-size: .7rem; font-weight: 400; padding: .45rem .5rem; text-align: center; min-width: 64px; }
-  th.tour-header.current-col { color: var(--accent); }
-  td.player-name-td { text-align: left; padding: .4rem .6rem; position: sticky; left: 0; background: var(--bg); z-index: 1; font-size: .82rem; line-height: 1.3; }
-  td.player-name-td.active-row { background: #1e1e1e; color: var(--accent); font-weight: 600; }
-  .player-name-main { display: flex; align-items: center; gap: .3rem; }
-  .player-badges-row { font-size: .72rem; margin-top: .15rem; }
-  .bars-badge { font-size: .75rem; color: var(--bar-color); font-weight: 700; }
-  .bars-badge.danger { color: var(--red); }
-  td.score-cell { text-align: center; padding: .4rem .5rem; font-size: .8rem; }
-  td.score-cell.active-row { background: #1a1a1a; }
-  .turn-pts { color: var(--text-muted); font-size: .7rem; display: block; }
-  .turn-pts.zero { color: var(--bar-color); }
-  .total-pts { font-weight: 600; font-size: .82rem; display: block; }
-  .total-pts.win { color: var(--green); }
-  td.pending { color: var(--text-muted); font-size: .75rem; text-align: center; background: #1a1a1a; }
-  td.empty { color: var(--border); text-align: center; font-size: .75rem; }
+  .entry-panel{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:.6rem .8rem .7rem;}
+  .entry-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
+  .current-player-label{font-size:.95rem;font-weight:600;color:var(--accent);}
+  .bars-warning{background:#3a2200;border:1px solid var(--bar-color);border-radius:6px;padding:.4rem .7rem;font-size:.78rem;color:var(--bar-color);margin-bottom:.4rem;line-height:1.4;}
+  .bars-warning.danger{background:#3a0000;border-color:var(--red);color:var(--red);}
+  body.light .bars-warning{background:#fff3e0;}
+  body.light .bars-warning.danger{background:#fdecea;}
+  .input-row{display:flex;gap:.5rem;margin-bottom:.35rem;}
+  .input-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.55rem .7rem;font-size:1rem;text-align:center;font-family:var(--font);outline:none;}
+  .input-row input:focus{border-color:var(--accent2);}
+  .input-row input.error{border-color:var(--red);}
+  .error-msg{color:var(--red);font-size:.72rem;margin-bottom:.35rem;min-height:.9rem;}
+  .btn-validate{background:var(--accent);color:#111;border:none;border-radius:6px;padding:.55rem 1rem;font-size:.9rem;font-weight:700;cursor:pointer;flex-shrink:0;}
+  .actions-row{display:flex;gap:.4rem;margin-bottom:.5rem;flex-wrap:wrap;}
+  .btn-action{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-muted);padding:.4rem .65rem;font-size:.75rem;cursor:pointer;white-space:nowrap;}
+  .btn-action.prev-score{border-color:var(--accent2);color:var(--accent);}
+  .btn-action.zero{border-color:#6b2020;color:var(--red);}
+  .btn-action:disabled{opacity:.35;cursor:not-allowed;}
 
-  /* ENTRY PANEL */
-  .entry-panel { flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); padding: .8rem 1rem 1rem; max-height: 62vh; overflow-y: auto; }
-  .entry-top { margin-bottom: .5rem; }
-  .current-player-label { font-size: 1rem; font-weight: 600; color: var(--accent); }
-  .bars-warning { background: #3a2200; border: 1px solid var(--bar-color); border-radius: 6px; padding: .5rem .8rem; font-size: .8rem; color: var(--bar-color); margin-bottom: .6rem; line-height: 1.4; }
-  .bars-warning.danger { background: #3a0000; border-color: var(--red); color: var(--red); }
-  .input-row { display: flex; gap: .5rem; margin-bottom: .5rem; }
-  .input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .65rem .8rem; font-size: 1.1rem; text-align: center; font-family: var(--font); outline: none; transition: border-color .2s; }
-  .input-row input:focus { border-color: var(--accent2); }
-  .input-row input.error { border-color: var(--red); }
-  .error-msg { color: var(--red); font-size: .75rem; margin-bottom: .5rem; min-height: 1rem; }
-  .btn-validate { background: var(--accent); color: #111; border: none; border-radius: 6px; padding: .65rem 1.1rem; font-size: .95rem; font-weight: 700; cursor: pointer; flex-shrink: 0; }
-  .actions-row { display: flex; gap: .4rem; margin-bottom: .7rem; flex-wrap: wrap; }
-  .btn-action { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); padding: .45rem .7rem; font-size: .78rem; cursor: pointer; white-space: nowrap; }
-  .btn-action.prev-score { border-color: var(--accent2); color: var(--accent); }
-  .btn-action.zero { border-color: #6b2020; color: var(--red); }
-  .btn-action.correct { border-color: #3a3a6b; color: #9999dd; }
-  .btn-action:disabled { opacity: .35; cursor: not-allowed; }
+  .calc-area{display:flex;flex-direction:column;gap:.3rem;}
+  .calc-section{display:flex;flex-direction:column;gap:.2rem;}
+  .calc-section-label{font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+  .calc-row{display:grid;gap:.25rem;}
+  .calc-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.35rem .3rem;font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:0;}
+  .calc-btn:active{background:var(--surface2);}
+  .calc-btn .label-part{font-size:.72rem;white-space:nowrap;}
 
-  /* CALC */
-  .calc-toggle-btn { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .7rem 1rem; font-size: .88rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
-  .calc-toggle-btn .calc-total { color: var(--accent); font-weight: 700; font-size: .95rem; }
-  .calc-section { margin-bottom: .6rem; }
-  .calc-section-label { font-size: .68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .35rem; padding-left: .1rem; }
-  .calc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .3rem; }
-  .calc-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .5rem .6rem; font-size: .78rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: .4rem; }
-  .calc-btn:active { background: var(--surface2); }
-  .calc-btn .pts { color: var(--accent); font-weight: 600; font-size: .75rem; flex-shrink: 0; }
-  .calc-btn .dice-wrap { display: flex; align-items: center; gap: .2rem; }
-  .calc-btn .label-part { flex: 1; text-align: left; }
+  /* ── SETTINGS DRAWER ── */
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:80;opacity:0;transition:opacity .25s;pointer-events:none;}
+  .drawer-backdrop.open{opacity:1;pointer-events:all;}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:280px;max-width:85vw;background:var(--surface);border-left:1px solid var(--border);z-index:81;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow);display:flex;flex-direction:column;}
+  .drawer.open{transform:translateX(0);}
+  .drawer-header{padding:1.2rem 1rem .8rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .drawer-header h2{font-size:.85rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);}
+  .drawer-close{background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;line-height:1;}
+  .drawer-body{padding:1.2rem 1rem;display:flex;flex-direction:column;gap:1.4rem;flex:1;overflow-y:auto;}
+  .setting-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+  .setting-label{font-size:.88rem;color:var(--text);}
+  .setting-sub{font-size:.72rem;color:var(--text-muted);margin-top:.15rem;}
+  /* Toggle switch */
+  .toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+  .toggle input{opacity:0;width:0;height:0;position:absolute;}
+  .toggle-track{position:absolute;inset:0;background:var(--border);border-radius:24px;transition:background .2s;cursor:pointer;}
+  .toggle input:checked+.toggle-track{background:var(--accent2);}
+  .toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;pointer-events:none;}
+  .toggle input:checked~.toggle-thumb{transform:translateX(20px);}
 
   /* OVERLAYS */
-  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: flex; align-items: flex-end; justify-content: center; z-index: 10; }
-  .popup { background: var(--surface); border-top: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 480px; padding: 1.5rem 1.2rem 2rem; max-height: 80vh; overflow-y: auto; }
-  .popup h3 { font-size: .78rem; font-weight: 400; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .8rem; }
-  .popup-warning { background: #2a1f00; border: 1px solid var(--bar-color); border-radius: 6px; padding: .6rem .9rem; font-size: .8rem; color: var(--bar-color); margin-bottom: 1rem; line-height: 1.5; }
-  .rank-row { display: flex; align-items: center; padding: .55rem 0; border-bottom: 1px solid var(--border); gap: .6rem; }
-  .rank-num { color: var(--text-muted); font-size: .8rem; width: 20px; text-align: center; }
-  .rank-name { flex: 1; font-size: .9rem; }
-  .rank-pts { font-weight: 700; color: var(--accent); font-size: .9rem; }
-  .popup-close { width: 100%; margin-top: 1rem; background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); padding: .7rem; font-size: .9rem; cursor: pointer; }
-
-  .winner-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 1rem; }
-  .winner-popup { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; max-width: 400px; padding: 2rem 1.5rem; text-align: center; max-height: 90vh; overflow-y: auto; }
-  .winner-title { font-size: .75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .15em; margin-bottom: 1rem; }
-  .winner-name { font-size: 2rem; font-weight: 300; color: var(--accent); margin-bottom: .3rem; }
-  .winner-score-text { font-size: .95rem; color: var(--text-muted); margin-bottom: 1.5rem; }
-  .rankings { text-align: left; border-top: 1px solid var(--border); padding-top: 1rem; margin-bottom: 1.5rem; }
-
-  .rematch-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: flex; align-items: center; justify-content: center; z-index: 30; padding: 1rem; }
-  .rematch-popup { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; max-width: 380px; padding: 1.8rem 1.5rem; max-height: 90vh; overflow-y: auto; }
-  .rematch-popup h2 { font-size: .78rem; font-weight: 400; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .6rem; }
-  .rematch-popup p { font-size: .85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; }
-  .first-player-list { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
-  .first-player-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .75rem 1rem; font-size: .95rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-  .fp-badges { font-size: .9rem; }
-
-  .alert-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; z-index: 40; padding: 1rem; }
-  .alert-box { background: var(--surface); border: 1px solid var(--red); border-radius: var(--radius); padding: 1.8rem 1.5rem; max-width: 320px; width: 100%; text-align: center; }
-  .alert-box h3 { color: var(--red); font-size: 1rem; margin-bottom: .7rem; }
-  .alert-box p { color: var(--text-muted); font-size: .88rem; margin-bottom: 1.3rem; line-height: 1.5; }
-  .alert-box button { background: var(--red); color: #fff; border: none; border-radius: 6px; padding: .65rem 1.5rem; font-size: .9rem; cursor: pointer; font-weight: 700; }
-
-  .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
-  .confirm-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.8rem 1.5rem; max-width: 320px; width: 100%; text-align: center; }
-  .confirm-box h3 { color: var(--accent); font-size: 1rem; margin-bottom: .7rem; }
-  .confirm-box p { color: var(--text-muted); font-size: .88rem; margin-bottom: 1.3rem; line-height: 1.5; }
-  .confirm-btns { display: flex; gap: .6rem; justify-content: center; }
-  .confirm-btns button { border-radius: 6px; padding: .65rem 1.2rem; font-size: .9rem; cursor: pointer; border: none; }
-  .confirm-cancel-btn { background: none; border: 1px solid var(--border) !important; color: var(--text-muted); }
-  .confirm-ok-btn { background: var(--accent); color: #111; font-weight: 700; }
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:flex-end;justify-content:center;z-index:10;}
+  .popup{background:var(--surface);border-top:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:480px;padding:1.5rem 1.2rem 2rem;max-height:80vh;overflow-y:auto;}
+  .popup h3{font-size:.78rem;font-weight:400;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.8rem;}
+  .popup-warning{background:#2a1f00;border:1px solid var(--bar-color);border-radius:6px;padding:.6rem .9rem;font-size:.8rem;color:var(--bar-color);margin-bottom:1rem;line-height:1.5;}
+  body.light .popup-warning{background:#fff8e1;}
+  .rank-row{display:flex;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--border);gap:.6rem;}
+  .rank-num{color:var(--text-muted);font-size:.8rem;width:20px;text-align:center;}
+  .rank-name{flex:1;font-size:.9rem;}
+  .rank-pts{font-weight:700;color:var(--accent);font-size:.9rem;}
+  .popup-close{width:100%;margin-top:1rem;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);padding:.7rem;font-size:.9rem;cursor:pointer;}
+  .winner-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:20;padding:1rem;}
+  .winner-popup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:400px;padding:2rem 1.5rem;text-align:center;max-height:90vh;overflow-y:auto;}
+  .winner-title{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.15em;margin-bottom:1rem;}
+  .winner-name{font-size:2rem;font-weight:300;color:var(--accent);margin-bottom:.3rem;}
+  .winner-score-text{font-size:.95rem;color:var(--text-muted);margin-bottom:1.5rem;}
+  .rankings{text-align:left;border-top:1px solid var(--border);padding-top:1rem;margin-bottom:1.5rem;}
+  .rematch-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:30;padding:1rem;}
+  .rematch-popup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:380px;padding:1.8rem 1.5rem;max-height:90vh;overflow-y:auto;}
+  .rematch-popup h2{font-size:.78rem;font-weight:400;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;}
+  .rematch-popup p{font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;}
+  .first-player-list{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;}
+  .first-player-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.75rem 1rem;font-size:.95rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+  .fp-badges{font-size:.9rem;}
+  .alert-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:40;padding:1rem;}
+  .alert-box{background:var(--surface);border:1px solid var(--red);border-radius:var(--radius);padding:1.8rem 1.5rem;max-width:320px;width:100%;text-align:center;}
+  .alert-box h3{color:var(--red);font-size:1rem;margin-bottom:.7rem;}
+  .alert-box p{color:var(--text-muted);font-size:.88rem;margin-bottom:1.3rem;line-height:1.5;}
+  .alert-box button{background:var(--red);color:#fff;border:none;border-radius:6px;padding:.65rem 1.5rem;font-size:.9rem;cursor:pointer;font-weight:700;}
+  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:50;padding:1rem;}
+  .confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem 1.5rem;max-width:320px;width:100%;text-align:center;}
+  .confirm-box h3{color:var(--accent);font-size:1rem;margin-bottom:.7rem;}
+  .confirm-box p{color:var(--text-muted);font-size:.88rem;margin-bottom:1.3rem;line-height:1.5;}
+  .confirm-btns{display:flex;gap:.6rem;justify-content:center;}
+  .confirm-btns button{border-radius:6px;padding:.65rem 1.2rem;font-size:.9rem;cursor:pointer;border:none;}
+  .confirm-cancel-btn{background:none;border:1px solid var(--border)!important;color:var(--text-muted);}
+  .confirm-ok-btn{background:var(--accent);color:#111;font-weight:700;}
+  .edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:60;padding:1rem;}
+  .edit-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem 1.4rem;max-width:300px;width:100%;}
+  .edit-box h3{color:var(--accent);font-size:.9rem;margin-bottom:.3rem;}
+  .edit-box p{color:var(--text-muted);font-size:.78rem;margin-bottom:1rem;line-height:1.4;}
+  .edit-box input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.65rem .8rem;font-size:1.1rem;text-align:center;font-family:var(--font);outline:none;margin-bottom:.4rem;}
+  .edit-box input.error{border-color:var(--red);}
+  .edit-error{color:var(--red);font-size:.72rem;min-height:.9rem;margin-bottom:.6rem;}
+  .edit-btns{display:flex;gap:.5rem;}
+  .edit-btns button{flex:1;padding:.65rem;border-radius:6px;border:none;font-size:.88rem;cursor:pointer;}
+  .edit-cancel{background:none;border:1px solid var(--border)!important;color:var(--text-muted);}
+  .edit-ok{background:var(--accent);color:#111;font-weight:700;}
 </style>
 </head>
 <body>
@@ -165,11 +191,19 @@
     <div class="header-btns">
       <button class="btn-sm accent" id="btn-classement">🏅 Classement</button>
       <button class="btn-sm" id="btn-new-game">Nouvelle partie</button>
+      <button class="btn-icon" id="btn-settings" title="Paramètres">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
     </div>
   </div>
   <div class="table-wrap" id="table-wrap"><table id="score-table"></table></div>
   <div class="entry-panel">
-    <div class="entry-top"><div class="current-player-label" id="current-player-label">—</div></div>
+    <div class="entry-top">
+      <div class="current-player-label" id="current-player-label">—</div>
+      <span id="calc-total-label" style="color:var(--accent);font-weight:700;font-size:.95rem;">0 pts</span>
+    </div>
     <div id="bars-warning-box"></div>
     <div class="input-row">
       <input type="number" id="manual-input" min="0" placeholder="Score du tour"/>
@@ -177,16 +211,44 @@
     </div>
     <div class="error-msg" id="error-msg"></div>
     <div class="actions-row">
-      <button class="btn-action correct" id="btn-correct">✎ Corriger</button>
       <button class="btn-action" id="calc-reset-btn">Réinitialiser</button>
       <button class="btn-action zero" id="btn-zero">✕ Zéro</button>
       <button class="btn-action prev-score" id="btn-prev-score" style="display:none">+ Score précédent</button>
     </div>
-    <button class="calc-toggle-btn" id="calc-toggle">
-      <span>🎲 Calculateur de points</span>
-      <span class="calc-total" id="calc-total-label">0 pts</span>
-    </button>
-    <div id="calc-area" style="display:none"></div>
+    <div class="calc-area" id="calc-area"></div>
+  </div>
+</div>
+
+<!-- SETTINGS DRAWER -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2>Paramètres</h2>
+    <button class="drawer-close" id="drawer-close">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Sons</div>
+        <div class="setting-sub">Effets sonores du jeu</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="toggle-sound" checked/>
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Mode clair</div>
+        <div class="setting-sub">Thème lumineux</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="toggle-light"/>
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>
   </div>
 </div>
 
@@ -243,404 +305,188 @@
   </div>
 </div>
 
+<!-- EDIT -->
+<div class="edit-overlay" id="edit-overlay" style="display:none">
+  <div class="edit-box">
+    <h3 id="edit-title">Modifier le score</h3>
+    <p id="edit-subtitle">—</p>
+    <input type="number" id="edit-input" min="0" placeholder="Nouveau score du tour"/>
+    <div class="edit-error" id="edit-error"></div>
+    <div class="edit-btns">
+      <button class="edit-cancel" id="edit-cancel">Annuler</button>
+      <button class="edit-ok" id="edit-ok">Valider</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ── SOUND ──
-function playZeroSound() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    // Pouet : descente rapide de fréquence
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(520, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.35);
-    gain.gain.setValueAtTime(0.35, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.4);
-  } catch(e) {}
+// ── PREFS (son + thème) ──
+var PREF_KEY='schmich_prefs';
+var prefs={sound:true,light:false};
+function loadPrefs(){try{var r=localStorage.getItem(PREF_KEY);if(r){var p=JSON.parse(r);prefs.sound=p.sound!==false;prefs.light=!!p.light;}}catch(e){}}
+function savePrefs(){try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs));}catch(e){}}
+function applyTheme(){
+  if(prefs.light)document.body.classList.add('light');
+  else document.body.classList.remove('light');
 }
+
+// ── AUDIO ──
+function mkCtx(){return new(window.AudioContext||window.webkitAudioContext)();}
+function playZeroSound(){if(!prefs.sound)return;try{var ctx=mkCtx(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(400,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.3);g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);o.start();o.stop(ctx.currentTime+0.4);}catch(e){}}
+function playResetSound(){if(!prefs.sound)return;try{var ctx=mkCtx();[0,0.4].forEach(function(off){var o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(300,ctx.currentTime+off);o.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+off+0.35);g.gain.setValueAtTime(0.25,ctx.currentTime+off);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+off+0.4);o.start(ctx.currentTime+off);o.stop(ctx.currentTime+off+0.45);});}catch(e){}}
+function playApplauseSound(){if(!prefs.sound)return;try{var ctx=mkCtx();[260,320,390,460,520].forEach(function(f){var o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f*0.8,ctx.currentTime);o.frequency.linearRampToValueAtTime(f*1.3,ctx.currentTime+0.6);g.gain.setValueAtTime(0,ctx.currentTime);g.gain.linearRampToValueAtTime(0.07,ctx.currentTime+0.05);g.gain.setValueAtTime(0.07,ctx.currentTime+0.6);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.0);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+1.1);});}catch(e){}}
+function playSuspenseSound(){if(!prefs.sound)return;try{var ctx=mkCtx();[110,138,165].forEach(function(f){var o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.setValueAtTime(f,ctx.currentTime);o.frequency.linearRampToValueAtTime(f*1.1,ctx.currentTime+1.5);g.gain.setValueAtTime(0,ctx.currentTime);g.gain.linearRampToValueAtTime(0.06,ctx.currentTime+0.1);g.gain.setValueAtTime(0.06,ctx.currentTime+1.2);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.8);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+1.9);});}catch(e){}}
 
 // ── DICE SVG ──
-function diceSVG(n) {
-  const DOT = (x,y) => `<circle cx="${x}" cy="${y}" r="1.8" fill="#e8d5a3"/>`;
-  const pos = {
-    1:[[10,10]], 2:[[5.5,5.5],[14.5,14.5]], 3:[[5.5,5.5],[10,10],[14.5,14.5]],
-    4:[[5.5,5.5],[14.5,5.5],[5.5,14.5],[14.5,14.5]],
-    5:[[5.5,5.5],[14.5,5.5],[10,10],[5.5,14.5],[14.5,14.5]],
-    6:[[5.5,4.5],[14.5,4.5],[5.5,10],[14.5,10],[5.5,15.5],[14.5,15.5]],
-  };
-  const dots = (pos[n]||[]).map(([x,y])=>DOT(x,y)).join('');
-  return `<svg width="18" height="18" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect x="1" y="1" width="18" height="18" rx="3.5" fill="#1a1a1a" stroke="#555" stroke-width="1.2"/>${dots}</svg>`;
+function diceSVG(n,size){
+  size=size||18;
+  var DOT=function(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="1.8" fill="#e8d5a3"/>';};
+  var pos={1:[[10,10]],2:[[5.5,5.5],[14.5,14.5]],3:[[5.5,5.5],[10,10],[14.5,14.5]],4:[[5.5,5.5],[14.5,5.5],[5.5,14.5],[14.5,14.5]],5:[[5.5,5.5],[14.5,5.5],[10,10],[5.5,14.5],[14.5,14.5]],6:[[5.5,4.5],[14.5,4.5],[5.5,10],[14.5,10],[5.5,15.5],[14.5,15.5]]};
+  var dots=(pos[n]||[]).map(function(p){return DOT(p[0],p[1]);}).join('');
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="18" height="18" rx="3.5" fill="#1a1a1a" stroke="#555" stroke-width="1.2"/>'+dots+'</svg>';
 }
 
-// ── CALC SECTIONS ──
-const SECTIONS = [
-  { label: 'Divers', combos: [
-    {mult:1, die:5, pts:50},
-    {mult:1, die:1, pts:100},
-    {label:'Suite', pts:1000},
-  ]},
-  { label: 'Triple', combos: [
-    {mult:3,die:2,pts:200},{mult:3,die:3,pts:300},{mult:3,die:4,pts:400},
-    {mult:3,die:5,pts:500},{mult:3,die:6,pts:600},{mult:3,die:1,pts:1000},
-  ]},
-  { label: 'Quadruple', combos: [
-    {mult:4,die:2,pts:400},{mult:4,die:3,pts:600},{mult:4,die:4,pts:800},
-    {mult:4,die:5,pts:1000},{mult:4,die:6,pts:1200},{mult:4,die:1,pts:2000},
-  ]},
-  { label: 'Quintuple', combos: [
-    {mult:5,die:2,pts:800},{mult:5,die:3,pts:1200},{mult:5,die:4,pts:1600},
-    {mult:5,die:5,pts:2000},{mult:5,die:6,pts:2400},{mult:5,die:1,pts:4000},
-  ]},
+// ── SECTIONS CALC ──
+var SECTIONS=[
+  {label:'Divers',cols:6,combos:[{die:5,pts:50},{die:1,pts:100},{label:'Suite',pts:1000}]},
+  {label:'Triple ×3',cols:6,combos:[{die:1,pts:1000},{die:2,pts:200},{die:3,pts:300},{die:4,pts:400},{die:5,pts:500},{die:6,pts:600}]},
+  {label:'Quadruple ×4',cols:6,combos:[{die:1,pts:2000},{die:2,pts:400},{die:3,pts:600},{die:4,pts:800},{die:5,pts:1000},{die:6,pts:1200}]},
+  {label:'Quintuple ×5',cols:6,combos:[{die:1,pts:4000},{die:2,pts:800},{die:3,pts:1200},{die:4,pts:1600},{die:5,pts:2000},{die:6,pts:2400}]},
 ];
 
 // ── STATE ──
-let players=[], scores=[], bars=[], currentPlayer=0, currentTurn=0;
-let calcScore=0, gameOver=false, prevPlayerIdx=-1, prevUsed=false;
-let originalPlayers=[], playerBadges=[];
-let canCorrect=false; // vrai si au moins 1 tour a été joué
+var players=[],scores=[],bars=[],currentPlayer=0,currentTurn=0;
+var calcScore=0,gameOver=false,prevPlayerIdx=-1,prevUsed=false;
+var originalPlayers=[],playerBadges=[];
+var editTarget=null,confirmCallback=null;
 
-// ── SAVE / RESTORE (localStorage) ──
-const SAVE_KEY = 'schmich_state';
-function saveState() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify({
-      players, scores, bars, currentPlayer, currentTurn,
-      gameOver, prevPlayerIdx, prevUsed, originalPlayers, playerBadges, canCorrect
-    }));
-  } catch(e) {}
-}
-function clearState() { try { localStorage.removeItem(SAVE_KEY); } catch(e) {} }
-function loadState() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return false;
-    const s = JSON.parse(raw);
-    players=s.players; scores=s.scores; bars=s.bars;
-    currentPlayer=s.currentPlayer; currentTurn=s.currentTurn;
-    gameOver=s.gameOver; prevPlayerIdx=s.prevPlayerIdx; prevUsed=s.prevUsed;
-    originalPlayers=s.originalPlayers; playerBadges=s.playerBadges;
-    canCorrect=s.canCorrect||false;
-    return true;
-  } catch(e) { return false; }
-}
+// ── SAVE/LOAD GAME ──
+var SAVE_KEY='schmich_v3';
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({players:players,scores:scores,bars:bars,currentPlayer:currentPlayer,currentTurn:currentTurn,gameOver:gameOver,prevPlayerIdx:prevPlayerIdx,prevUsed:prevUsed,originalPlayers:originalPlayers,playerBadges:playerBadges}));}catch(e){}}
+function clearState(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+function loadState(){try{var raw=localStorage.getItem(SAVE_KEY);if(!raw)return false;var s=JSON.parse(raw);players=s.players;scores=s.scores;bars=s.bars;currentPlayer=s.currentPlayer;currentTurn=s.currentTurn;gameOver=s.gameOver;prevPlayerIdx=s.prevPlayerIdx;prevUsed=s.prevUsed;originalPlayers=s.originalPlayers;playerBadges=s.playerBadges;return true;}catch(e){return false;}}
 
 // ── HELPERS ──
-function getTotal(pi){ return scores[pi].reduce((a,b)=>a+b,0); }
-function showOverlay(id){ document.getElementById(id).style.display='flex'; }
-function hideOverlay(id){ document.getElementById(id).style.display='none'; }
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-function badgesFor(oi){
-  const b=playerBadges[oi]||{crowns:0,sads:0};
-  return (b.crowns?'👑'.repeat(b.crowns):'')+(b.sads?'😔'.repeat(b.sads):'');
-}
-function origIdx(pi){ return originalPlayers.indexOf(players[pi]); }
+function getTotal(pi){return scores[pi].reduce(function(a,b){return a+b;},0);}
+function showOverlay(id){document.getElementById(id).style.display='flex';}
+function hideOverlay(id){document.getElementById(id).style.display='none';}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
+function badgesFor(oi){var b=playerBadges[oi]||{crowns:0,sads:0};return (b.crowns?'👑'.repeat(b.crowns):'')+(b.sads?'😔'.repeat(b.sads):'');}
+function origIdx(pi){return originalPlayers.indexOf(players[pi]);}
+function clearError(){document.getElementById('error-msg').textContent='';document.getElementById('manual-input').classList.remove('error');}
+function showError(msg){document.getElementById('error-msg').textContent=msg;document.getElementById('manual-input').classList.add('error');}
+function showAlert(msg){document.getElementById('alert-msg').innerHTML=msg;showOverlay('alert-overlay');}
+function showConfirm(cb){confirmCallback=cb;showOverlay('confirm-overlay');}
+
+// ── DRAWER ──
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('drawer-backdrop').classList.add('open');}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawer-backdrop').classList.remove('open');}
+document.getElementById('btn-settings').onclick=openDrawer;
+document.getElementById('drawer-close').onclick=closeDrawer;
+document.getElementById('drawer-backdrop').onclick=closeDrawer;
+document.getElementById('toggle-sound').onchange=function(){prefs.sound=this.checked;savePrefs();};
+document.getElementById('toggle-light').onchange=function(){prefs.light=this.checked;savePrefs();applyTheme();};
 
 // ── BUILD CALC ──
-function buildCalc() {
-  const area = document.getElementById('calc-area');
-  area.innerHTML = '';
-  SECTIONS.forEach(sec => {
-    const wrap = document.createElement('div');
-    wrap.className = 'calc-section';
-    wrap.innerHTML = `<div class="calc-section-label">${sec.label}</div>`;
-    const g = document.createElement('div');
-    g.className = 'calc-grid';
-    sec.combos.forEach(c => {
-      const btn = document.createElement('button');
-      btn.className = 'calc-btn';
-      if (c.label) {
-        btn.innerHTML = `<span class="label-part">${c.label}</span><span class="pts">+${c.pts}</span>`;
-      } else {
-        const dices = Array.from({length:c.mult},()=>diceSVG(c.die)).join('');
-        btn.innerHTML = `<span class="dice-wrap">${dices}</span><span class="pts">+${c.pts}</span>`;
-      }
-      btn.onclick = () => { calcScore += c.pts; syncCalc(); };
-      g.appendChild(btn);
+function buildCalc(){
+  var area=document.getElementById('calc-area');area.innerHTML='';
+  SECTIONS.forEach(function(sec){
+    var wrap=document.createElement('div');wrap.className='calc-section';
+    var lbl=document.createElement('div');lbl.className='calc-section-label';lbl.textContent=sec.label;wrap.appendChild(lbl);
+    var row=document.createElement('div');row.className='calc-row';
+    row.style.gridTemplateColumns='repeat('+sec.cols+',1fr)';
+    sec.combos.forEach(function(c){
+      var btn=document.createElement('button');btn.className='calc-btn';
+      if(c.label==='Suite'){var sp=document.createElement('span');sp.className='label-part';sp.textContent='Suite';btn.appendChild(sp);}
+      else{btn.innerHTML=diceSVG(c.die,16);}
+      btn.title='+'+(c.pts)+' pts';
+      (function(pts){btn.onclick=function(){calcScore+=pts;syncCalc();};})(c.pts);
+      row.appendChild(btn);
     });
-    wrap.appendChild(g);
-    area.appendChild(wrap);
+    for(var s=sec.combos.length;s<sec.cols;s++){var empty=document.createElement('div');row.appendChild(empty);}
+    wrap.appendChild(row);area.appendChild(wrap);
   });
 }
 
 // ── SETUP ──
-function initSetupRows(names){
-  const list=document.getElementById('players-list');
-  list.innerHTML='';
-  (names||['Joueur 1','Joueur 2']).forEach(n=>addPlayerRow(n));
-}
-function addPlayerRow(name=''){
-  const list=document.getElementById('players-list');
-  if(list.children.length>=20) return;
-  const row=document.createElement('div');
-  row.className='player-input-row';
-  row.innerHTML=`<input type="text" placeholder="Nom du joueur" value="${name}"/><button class="btn-remove">×</button>`;
-  row.querySelector('.btn-remove').onclick=()=>{ if(list.children.length>2) row.remove(); };
-  list.appendChild(row);
-}
-
-// ── EVENTS ──
-document.getElementById('btn-add-player').onclick=()=>addPlayerRow();
-document.getElementById('btn-start').onclick=()=>{
-  const inputs=document.querySelectorAll('#players-list input');
-  const names=Array.from(inputs).map((inp,i)=>inp.value.trim()||`Joueur ${i+1}`);
-  if(names.length<2) return;
-  originalPlayers=[...names];
-  playerBadges=names.map(()=>({crowns:0,sads:0}));
-  startGame(names);
-};
-document.getElementById('btn-new-game').onclick=()=>showConfirm(()=>{ clearState(); showScreen('setup'); initSetupRows(); });
-document.getElementById('btn-new-game-winner').onclick=()=>{ hideOverlay('winner-overlay'); clearState(); showScreen('setup'); initSetupRows(); };
-document.getElementById('btn-cancel-rematch').onclick=()=>hideOverlay('rematch-overlay');
-document.getElementById('btn-classement').onclick=showClassement;
-document.getElementById('classement-close').onclick=()=>hideOverlay('classement-overlay');
-document.getElementById('classement-overlay').onclick=e=>{ if(e.target===document.getElementById('classement-overlay')) hideOverlay('classement-overlay'); };
-document.getElementById('alert-ok').onclick=()=>hideOverlay('alert-overlay');
-document.getElementById('confirm-cancel').onclick=()=>hideOverlay('confirm-overlay');
-document.getElementById('confirm-ok').onclick=()=>{ hideOverlay('confirm-overlay'); confirmCallback&&confirmCallback(); };
-
-document.getElementById('calc-reset-btn').onclick=resetCalc;
-document.getElementById('calc-toggle').onclick=()=>{
-  const a=document.getElementById('calc-area');
-  a.style.display=a.style.display==='none'?'block':'none';
-};
-document.getElementById('manual-input').addEventListener('input',e=>{
-  const v=parseInt(e.target.value,10);
-  calcScore=isNaN(v)?0:v;
-  document.getElementById('calc-total-label').textContent=calcScore+' pts';
-  clearError();
-});
-document.getElementById('manual-input').addEventListener('keydown',e=>{ if(e.key==='Enter') validateTurn(); });
-document.getElementById('btn-validate').onclick=validateTurn;
-
-document.getElementById('btn-zero').onclick=()=>{
-  playZeroSound();
-  calcScore=0;
-  document.getElementById('manual-input').value='0';
-  document.getElementById('calc-total-label').textContent='0 pts';
-  clearError();
-  validateTurn();
-};
-
-document.getElementById('btn-prev-score').onclick=function(){
-  if(prevUsed||prevPlayerIdx<0) return;
-  const prev=scores[prevPlayerIdx][scores[prevPlayerIdx].length-1]??0;
-  if(prev<=0) return;
-  prevUsed=true; this.disabled=true;
-  calcScore+=prev; syncCalc();
-};
-
-document.getElementById('btn-correct').onclick=()=>{
-  if(!canCorrect) return;
-  // Revenir au joueur précédent
-  let prevP = currentPlayer - 1;
-  if(prevP < 0){ prevP = players.length - 1; currentTurn--; }
-  // Retirer le dernier score de ce joueur
-  const removed = scores[prevP].pop();
-  // Restaurer ses barres : si ce score était 0, retirer une barre; si c'était un reset (négatif), on ne peut pas récupérer l'état exact → on remet 0 barres
-  if(removed === 0){
-    if(bars[prevP] > 0) bars[prevP]--;
-  } else if(removed < 0){
-    // était un reset : total avant = -removed, on ne remet pas le score mais on nettoie les barres
-    bars[prevP] = 0;
-    const resetScore = scores[prevP].reduce((a,b)=>a+b,0);
-    // rien d'autre à faire, le score précédent est déjà là
-  } else {
-    bars[prevP] = 0;
-  }
-  currentPlayer = prevP;
-  prevPlayerIdx = prevP > 0 ? prevP - 1 : (currentTurn >= 0 ? players.length - 1 : -1);
-  prevUsed = false;
-  canCorrect = false;
-  resetCalc();
-  document.getElementById('calc-area').style.display='none';
-  clearError();
-  renderTable(); renderEntryPanel(); scrollToCurrentCol();
-  saveState();
-};
-
-let confirmCallback=null;
-function showConfirm(cb){ confirmCallback=cb; showOverlay('confirm-overlay'); }
+function initSetupRows(names){var list=document.getElementById('players-list');list.innerHTML='';(names||['Joueur 1','Joueur 2']).forEach(function(n){addPlayerRow(n);});}
+function addPlayerRow(name){name=name||'';var list=document.getElementById('players-list');if(list.children.length>=20)return;var row=document.createElement('div');row.className='player-input-row';row.innerHTML='<input type="text" placeholder="Nom du joueur" value="'+name+'"/><button class="btn-remove">×</button>';row.querySelector('.btn-remove').onclick=function(){if(list.children.length>2)row.remove();};list.appendChild(row);}
 
 // ── CALC HELPERS ──
-function syncCalc(){
-  document.getElementById('manual-input').value=calcScore;
-  document.getElementById('calc-total-label').textContent=calcScore+' pts';
-}
-function resetCalc(){
-  calcScore=0; prevUsed=false;
-  document.getElementById('btn-prev-score').disabled=false;
-  document.getElementById('manual-input').value='';
-  document.getElementById('calc-total-label').textContent='0 pts';
+function syncCalc(){document.getElementById('manual-input').value=calcScore;document.getElementById('calc-total-label').textContent=calcScore+' pts';}
+function resetCalc(){calcScore=0;prevUsed=false;document.getElementById('btn-prev-score').disabled=false;document.getElementById('manual-input').value='';document.getElementById('calc-total-label').textContent='0 pts';clearError();}
+
+// ── VALIDATE ──
+function validateTurn(){
+  if(gameOver)return;
+  var raw=document.getElementById('manual-input').value.trim();
+  var pts=parseInt(raw,10);
+  if(isNaN(pts)||pts<0){showError('Veuillez saisir un score valide.');return;}
+  if(pts>0&&pts%50!==0){showError('Le score doit être 0 ou un multiple de 50.');return;}
   clearError();
-}
-function clearError(){
-  document.getElementById('error-msg').textContent='';
-  document.getElementById('manual-input').classList.remove('error');
+  var isReset=false;
+  var prevTotal=getTotal(currentPlayer);
+  if(pts===0){
+    bars[currentPlayer]++;
+    if(bars[currentPlayer]>2){isReset=true;bars[currentPlayer]=0;scores[currentPlayer].push(prevTotal>0?-prevTotal:0);}
+    else{scores[currentPlayer].push(0);}
+  } else {
+    bars[currentPlayer]=0;scores[currentPlayer].push(pts);
+  }
+  var newTotal=getTotal(currentPlayer);
+  var crossed5k=(prevTotal<5000&&newTotal>=5000);
+  if(isReset)playResetSound();
+  else if(pts===0)playZeroSound();
+  prevPlayerIdx=currentPlayer;prevUsed=false;
+  resetCalc();
+  currentPlayer=(currentPlayer+1)%players.length;
+  if(currentPlayer===0)currentTurn++;
+  if(currentPlayer===0&&checkEndGame())return;
+  if(crossed5k)playSuspenseSound();
+  else if(pts>=1000)playApplauseSound();
+  renderTable();
+  if(bars[currentPlayer]===2)showAlert('<strong>'+players[currentPlayer]+'</strong> a déjà 2 barres !<br>Sans point ce tour → retour à 0.');
+  renderEntryPanel();scrollToCurrentCol();saveState();
 }
 
 // ── GAME ──
-function startGame(names){
-  players=[...names];
-  scores=players.map(()=>[]);
-  bars=players.map(()=>0);
-  currentPlayer=0; currentTurn=0; gameOver=false; prevPlayerIdx=-1; prevUsed=false; canCorrect=false;
-  resetCalc();
-  document.getElementById('calc-area').style.display='none';
-  showScreen('game');
-  renderTable(); renderEntryPanel();
-  saveState();
-}
+function startGame(names){players=names.slice();scores=players.map(function(){return[];});bars=players.map(function(){return 0;});currentPlayer=0;currentTurn=0;gameOver=false;prevPlayerIdx=-1;prevUsed=false;resetCalc();showScreen('game');renderTable();renderEntryPanel();saveState();}
+function checkEndGame(){if(currentPlayer!==0)return false;var totals=players.map(function(_,i){return getTotal(i);});if(Math.max.apply(null,totals)<5000)return false;var max=Math.max.apply(null,totals);var winnerIdx=totals.indexOf(max);assignBadges(totals,winnerIdx);showWinner(winnerIdx,totals);clearState();return true;}
+function assignBadges(totals,winnerIdx){var max=totals[winnerIdx],min=Math.min.apply(null,totals);players.forEach(function(name,i){var oi=originalPlayers.indexOf(name);if(oi<0)return;if(totals[i]===max)playerBadges[oi].crowns++;if(totals[i]===min)playerBadges[oi].sads++;});}
+function showWinner(idx,totals){gameOver=true;var max=totals[idx],min=Math.min.apply(null,totals);var ranking=players.map(function(n,i){return{n:n,pts:totals[i],i:i};}).sort(function(a,b){return b.pts-a.pts||a.i-b.i;});document.getElementById('winner-name').textContent=players[idx];document.getElementById('winner-score-text').textContent=totals[idx]+' points';document.getElementById('rankings').innerHTML=ranking.map(function(p,ri){var badge=p.pts===max?' 👑':(p.pts===min?' 😔':'');return '<div class="rank-row"><span class="rank-num">'+(ri+1)+'</span><span class="rank-name">'+p.n+badge+'</span><span class="rank-pts">'+p.pts+' pts</span></div>';}).join('');showOverlay('winner-overlay');}
 
-function validateTurn(isZero=false){
-  if(gameOver) return;
-  const raw=document.getElementById('manual-input').value.trim();
-  const pts=parseInt(raw,10);
-  if(isNaN(pts)||pts<0){
-    showError('Veuillez saisir un score valide.'); return;
-  }
-  if(pts>0 && pts%50!==0){
-    showError('Le score doit être un multiple de 50.'); return;
-  }
+// ── EDIT ──
+function openEditScore(pi,turnIdx){if(gameOver)return;var oldTurn=scores[pi][turnIdx];var total=scores[pi].slice(0,turnIdx+1).reduce(function(a,b){return a+b;},0);editTarget={pi:pi,turnIdx:turnIdx};document.getElementById('edit-title').textContent='Modifier — '+players[pi];document.getElementById('edit-subtitle').textContent='Tour '+(turnIdx+1)+' · Score actuel : '+(oldTurn>0?'+'+oldTurn:oldTurn)+' (total : '+total+')';var inp=document.getElementById('edit-input');inp.value=Math.max(0,oldTurn);inp.classList.remove('error');document.getElementById('edit-error').textContent='';showOverlay('edit-overlay');setTimeout(function(){inp.focus();},100);}
+function confirmEdit(){if(!editTarget)return;var raw=document.getElementById('edit-input').value.trim();var newTurn=parseInt(raw,10);var inp=document.getElementById('edit-input');var errEl=document.getElementById('edit-error');if(isNaN(newTurn)||newTurn<0){inp.classList.add('error');errEl.textContent='Valeur invalide.';return;}if(newTurn>0&&newTurn%50!==0){inp.classList.add('error');errEl.textContent='Doit être 0 ou un multiple de 50.';return;}var pi=editTarget.pi,turnIdx=editTarget.turnIdx;scores[pi][turnIdx]=newTurn;recalcBars(pi);hideOverlay('edit-overlay');editTarget=null;renderTable();renderEntryPanel();saveState();}
+function recalcBars(pi){var b=0;for(var t=0;t<scores[pi].length;t++){var s=scores[pi][t];if(s===0){b++;if(b>2)b=0;}else{b=0;}}bars[pi]=b;}
 
-  clearError();
-
-  if(pts===0){
-    playZeroSound();
-    bars[currentPlayer]++;
-    if(bars[currentPlayer]>2){
-      bars[currentPlayer]=0;
-      const total=getTotal(currentPlayer);
-      scores[currentPlayer].push(total>0?-total:0);
-    } else { scores[currentPlayer].push(0); }
-  } else {
-    bars[currentPlayer]=0;
-    scores[currentPlayer].push(pts);
-  }
-
-  prevPlayerIdx=currentPlayer; prevUsed=false; canCorrect=true;
-  resetCalc();
-  document.getElementById('calc-area').style.display='none';
-  currentPlayer=(currentPlayer+1)%players.length;
-  if(currentPlayer===0) currentTurn++;
-  if(currentPlayer===0 && checkEndGame()) return;
-  renderTable();
-  if(bars[currentPlayer]===2) showAlert(`<strong>${players[currentPlayer]}</strong> a déjà 2 barres !<br>Sans point ce tour → retour à 0.`);
-  renderEntryPanel(); scrollToCurrentCol();
-  saveState();
-}
-
-function showError(msg){
-  document.getElementById('error-msg').textContent=msg;
-  document.getElementById('manual-input').classList.add('error');
-}
-
-function checkEndGame(){
-  if(currentPlayer!==0) return false;
-  const totals=players.map((_,i)=>getTotal(i));
-  if(Math.max(...totals)<5000) return false;
-  const winnerIdx=totals.indexOf(Math.max(...totals));
-  assignBadges(totals,winnerIdx);
-  showWinner(winnerIdx,totals);
-  clearState();
-  return true;
-}
-
-function assignBadges(totals,winnerIdx){
-  const max=totals[winnerIdx], min=Math.min(...totals);
-  players.forEach((name,i)=>{
-    const oi=originalPlayers.indexOf(name);
-    if(oi<0) return;
-    if(totals[i]===max) playerBadges[oi].crowns++;
-    if(totals[i]===min) playerBadges[oi].sads++;
-  });
-}
-
-function getTotal(pi){ return scores[pi].reduce((a,b)=>a+b,0); }
-
-function showWinner(idx,totals){
-  gameOver=true;
-  const max=totals[idx], min=Math.min(...totals);
-  const ranking=players.map((n,i)=>({n,pts:totals[i],i})).sort((a,b)=>b.pts-a.pts||a.i-b.i);
-  document.getElementById('winner-name').textContent=players[idx];
-  document.getElementById('winner-score-text').textContent=`${totals[idx]} points`;
-  document.getElementById('rankings').innerHTML=ranking.map((p,ri)=>{
-    const badge=p.pts===max?' 👑':(p.pts===min?' 😔':'');
-    return `<div class="rank-row"><span class="rank-num">${ri+1}</span><span class="rank-name">${p.n}${badge}</span><span class="rank-pts">${p.pts} pts</span></div>`;
-  }).join('');
-  showOverlay('winner-overlay');
-}
-
-document.getElementById('btn-rematch').onclick=()=>{
-  hideOverlay('winner-overlay');
-  const list=document.getElementById('first-player-list');
-  list.innerHTML='';
-  originalPlayers.forEach((name,i)=>{
-    const badges=badgesFor(i);
-    const btn=document.createElement('button');
-    btn.className='first-player-btn';
-    btn.innerHTML=`<span>${name}</span><span class="fp-badges">${badges}</span>`;
-    btn.onclick=()=>{
-      hideOverlay('rematch-overlay');
-      const reordered=[];
-      for(let k=0;k<originalPlayers.length;k++) reordered.push(originalPlayers[(i+k)%originalPlayers.length]);
-      startGame(reordered);
-    };
-    list.appendChild(btn);
-  });
-  showOverlay('rematch-overlay');
-};
-
+// ── RENDER ──
 function renderEntryPanel(){
   document.getElementById('current-player-label').textContent=players[currentPlayer];
-  document.getElementById('turn-info').textContent=`Tour ${currentTurn+1}`;
-  // Bouton corriger
-  const bc=document.getElementById('btn-correct');
-  bc.disabled=!canCorrect;
-  // Bouton score précédent
-  const pb=document.getElementById('btn-prev-score');
-  if(prevPlayerIdx>=0&&scores[prevPlayerIdx].length>0){
-    const prev=scores[prevPlayerIdx][scores[prevPlayerIdx].length-1];
-    if(prev>0){ pb.style.display='inline-block'; pb.textContent=`+ Score précédent (+${prev})`; pb.disabled=prevUsed; }
-    else pb.style.display='none';
-  } else pb.style.display='none';
-  const wb=document.getElementById('bars-warning-box');
-  const b=bars[currentPlayer];
-  if(b===1) wb.innerHTML=`<div class="bars-warning">⚠️ <strong>${players[currentPlayer]}</strong> a 1 barre.</div>`;
-  else if(b===2) wb.innerHTML=`<div class="bars-warning danger">🚨 <strong>${players[currentPlayer]}</strong> a 2 barres ! Sans point → retour à 0.</div>`;
+  document.getElementById('turn-info').textContent='Tour '+(currentTurn+1);
+  var pb=document.getElementById('btn-prev-score');
+  if(prevPlayerIdx>=0&&scores[prevPlayerIdx].length>0){var prev=scores[prevPlayerIdx][scores[prevPlayerIdx].length-1];if(prev>0){pb.style.display='inline-block';pb.textContent='+ Score précédent (+'+prev+')';pb.disabled=prevUsed;}else pb.style.display='none';}
+  else pb.style.display='none';
+  var wb=document.getElementById('bars-warning-box'),b=bars[currentPlayer];
+  if(b===1)wb.innerHTML='<div class="bars-warning">⚠️ <strong>'+players[currentPlayer]+'</strong> a 1 barre.</div>';
+  else if(b===2)wb.innerHTML='<div class="bars-warning danger">🚨 <strong>'+players[currentPlayer]+'</strong> a 2 barres ! Sans point → retour à 0.</div>';
   else wb.innerHTML='';
 }
 
 function renderTable(){
-  const numCols=currentTurn+(currentPlayer>0?1:0)+1;
-  let html=`<thead><tr><th class="col-header">Joueur</th>`;
-  for(let t=0;t<numCols;t++){
-    html+=`<th class="tour-header${t===currentTurn&&!gameOver?' current-col':''}">T${t+1}</th>`;
-  }
+  var numCols=currentTurn+(currentPlayer>0?1:0)+1;
+  var html='<thead><tr><th class="col-header">Joueurs</th>';
+  for(var t=0;t<numCols;t++)html+='<th class="tour-header'+(t===currentTurn&&!gameOver?' current-col':'')+'">T'+(t+1)+'</th>';
   html+='</tr></thead><tbody>';
-  players.forEach((p,pi)=>{
-    const isActive=pi===currentPlayer&&!gameOver;
-    const barHtml=bars[pi]>0?`<span class="bars-badge${bars[pi]===2?' danger':''}">${'|'.repeat(bars[pi])}</span>`:'';
-    const oi=origIdx(pi);
-    const badges=oi>=0?badgesFor(oi):'';
-    html+=`<tr><td class="player-name-td${isActive?' active-row':''}">
-      <div class="player-name-main"><span>${p}</span>${barHtml}</div>
-      ${badges?`<div class="player-badges-row">${badges}</div>`:''}
-    </td>`;
-    for(let t=0;t<numCols;t++){
-      if(t<scores[pi].length){
-        const turn=scores[pi][t];
-        const total=scores[pi].slice(0,t+1).reduce((a,b)=>a+b,0);
-        const tl=turn>0?`+${turn}`:(turn<0?`${turn}`:'0');
-        html+=`<td class="score-cell${isActive?' active-row':''}"><span class="turn-pts${turn===0?' zero':''}">${tl}</span><span class="total-pts${total>=5000?' win':''}">${total}</span></td>`;
-      } else if(isActive&&t===currentTurn){
-        html+=`<td class="pending active-row">…</td>`;
-      } else { html+=`<td class="empty">—</td>`; }
+  players.forEach(function(p,pi){
+    var isActive=pi===currentPlayer&&!gameOver;
+    var barHtml=bars[pi]>0?'<span class="bars-badge'+(bars[pi]===2?' danger':'')+'">'+('|'.repeat(bars[pi]))+'</span>':'';
+    var oi=origIdx(pi);var badges=oi>=0?badgesFor(oi):'';
+    html+='<tr><td class="player-name-td'+(isActive?' active-row':'')+'"><div class="player-name-main"><span>'+p+'</span>'+barHtml+(badges?'<span style="font-size:.8rem;margin-left:.2rem">'+badges+'</span>':'')+'</div></td>';
+    for(var tt=0;tt<numCols;tt++){
+      if(tt<scores[pi].length){var turn=scores[pi][tt];var total=scores[pi].slice(0,tt+1).reduce(function(a,b){return a+b;},0);var tl=turn>0?'+'+turn:(turn<0?''+turn:'0');html+='<td class="score-cell'+(isActive?' active-row':'')+'" onclick="openEditScore('+pi+','+tt+')"><span class="turn-pts'+(turn===0?' zero':'')+'">'+tl+'</span><span class="total-pts'+(total>=5000?' win':'')+'">'+total+'</span></td>';}
+      else if(isActive&&tt===currentTurn){html+='<td class="pending active-row">…</td>';}
+      else{html+='<td class="empty">—</td>';}
     }
     html+='</tr>';
   });
@@ -648,31 +494,49 @@ function renderTable(){
   document.getElementById('score-table').innerHTML=html;
 }
 
-function scrollToCurrentCol(){ const w=document.getElementById('table-wrap'); w.scrollLeft=w.scrollWidth; }
+function scrollToCurrentCol(){var w=document.getElementById('table-wrap');w.scrollLeft=w.scrollWidth;}
 
 function showClassement(){
-  const totals=players.map((_,i)=>getTotal(i));
-  const sorted=players.map((n,i)=>({n,pts:totals[i],b:bars[i]})).sort((a,b)=>b.pts-a.pts);
-  document.getElementById('classement-list').innerHTML=sorted.map((p,ri)=>{
-    const bHtml=p.b>0?`<span style="color:${p.b===2?'var(--red)':'var(--bar-color)'};font-weight:700;margin-left:.3rem">${'|'.repeat(p.b)}</span>`:'';
-    return `<div class="rank-row"><span class="rank-num">${ri+1}</span><span class="rank-name">${p.n}${bHtml}</span><span class="rank-pts">${p.pts} pts</span></div>`;
-  }).join('');
-  const warn=document.getElementById('classement-warning');
-  if(currentPlayer!==0&&!gameOver){ warn.style.display='block'; warn.textContent=`⚠️ Tour ${currentTurn+1} en cours — ${players[currentPlayer]} n'a pas encore joué. Classement provisoire.`; }
+  var totals=players.map(function(_,i){return getTotal(i);});
+  var sorted=players.map(function(n,i){return{n:n,pts:totals[i],b:bars[i]};}).sort(function(a,b){return b.pts-a.pts;});
+  document.getElementById('classement-list').innerHTML=sorted.map(function(p,ri){var bHtml=p.b>0?'<span style="color:'+(p.b===2?'var(--red)':'var(--bar-color)')+';font-weight:700;margin-left:.3rem">'+('|'.repeat(p.b))+'</span>':'';return '<div class="rank-row"><span class="rank-num">'+(ri+1)+'</span><span class="rank-name">'+p.n+bHtml+'</span><span class="rank-pts">'+p.pts+' pts</span></div>';}).join('');
+  var warn=document.getElementById('classement-warning');
+  if(currentPlayer!==0&&!gameOver){warn.style.display='block';warn.textContent='⚠️ Tour '+(currentTurn+1)+' en cours — '+players[currentPlayer]+' n\'a pas encore joué. Classement provisoire.';}
   else warn.style.display='none';
   showOverlay('classement-overlay');
 }
 
-function showAlert(msg){ document.getElementById('alert-msg').innerHTML=msg; showOverlay('alert-overlay'); }
+// ── EVENTS ──
+document.getElementById('btn-add-player').onclick=function(){addPlayerRow('');};
+document.getElementById('btn-start').onclick=function(){var inputs=document.querySelectorAll('#players-list input');var names=Array.from(inputs).map(function(inp,i){return inp.value.trim()||('Joueur '+(i+1));});if(names.length<2)return;originalPlayers=names.slice();playerBadges=names.map(function(){return{crowns:0,sads:0};});startGame(names);};
+document.getElementById('btn-new-game').onclick=function(){showConfirm(function(){clearState();showScreen('setup');initSetupRows();});};
+document.getElementById('btn-new-game-winner').onclick=function(){showConfirm(function(){hideOverlay('winner-overlay');clearState();showScreen('setup');initSetupRows();});};
+document.getElementById('btn-cancel-rematch').onclick=function(){hideOverlay('rematch-overlay');};
+document.getElementById('btn-classement').onclick=showClassement;
+document.getElementById('classement-close').onclick=function(){hideOverlay('classement-overlay');};
+document.getElementById('classement-overlay').onclick=function(e){if(e.target===document.getElementById('classement-overlay'))hideOverlay('classement-overlay');};
+document.getElementById('alert-ok').onclick=function(){hideOverlay('alert-overlay');};
+document.getElementById('confirm-cancel').onclick=function(){hideOverlay('confirm-overlay');};
+document.getElementById('confirm-ok').onclick=function(){hideOverlay('confirm-overlay');if(confirmCallback)confirmCallback();};
+document.getElementById('calc-reset-btn').onclick=resetCalc;
+document.getElementById('manual-input').addEventListener('input',function(e){var v=parseInt(e.target.value,10);calcScore=isNaN(v)?0:v;document.getElementById('calc-total-label').textContent=calcScore+' pts';clearError();});
+document.getElementById('manual-input').addEventListener('keydown',function(e){if(e.key==='Enter')validateTurn();});
+document.getElementById('btn-validate').onclick=validateTurn;
+document.getElementById('btn-zero').onclick=function(){calcScore=0;document.getElementById('manual-input').value='0';syncCalc();clearError();validateTurn();};
+document.getElementById('btn-prev-score').onclick=function(){if(prevUsed||prevPlayerIdx<0)return;var prev=scores[prevPlayerIdx][scores[prevPlayerIdx].length-1]||0;if(prev<=0)return;prevUsed=true;this.disabled=true;calcScore+=prev;syncCalc();};
+document.getElementById('edit-cancel').onclick=function(){hideOverlay('edit-overlay');};
+document.getElementById('edit-ok').onclick=confirmEdit;
+document.getElementById('edit-input').addEventListener('keydown',function(e){if(e.key==='Enter')confirmEdit();});
+document.getElementById('btn-rematch').onclick=function(){hideOverlay('winner-overlay');var list=document.getElementById('first-player-list');list.innerHTML='';originalPlayers.forEach(function(name,i){var badges=badgesFor(i);var btn=document.createElement('button');btn.className='first-player-btn';btn.innerHTML='<span>'+name+'</span><span class="fp-badges">'+badges+'</span>';btn.onclick=function(){hideOverlay('rematch-overlay');var r=[];for(var k=0;k<originalPlayers.length;k++)r.push(originalPlayers[(i+k)%originalPlayers.length]);startGame(r);};list.appendChild(btn);});showOverlay('rematch-overlay');};
 
 // ── INIT ──
+loadPrefs();
+applyTheme();
+document.getElementById('toggle-sound').checked=prefs.sound;
+document.getElementById('toggle-light').checked=prefs.light;
 buildCalc();
-if(loadState()&&!gameOver){
-  showScreen('game');
-  renderTable(); renderEntryPanel(); scrollToCurrentCol();
-} else {
-  initSetupRows();
-}
+if(loadState()&&!gameOver){showScreen('game');renderTable();renderEntryPanel();scrollToCurrentCol();}
+else{initSetupRows();}
 </script>
 </body>
 </html>
