@@ -12,10 +12,7 @@
     --font:'Segoe UI',system-ui,sans-serif;
     --shadow:0 4px 24px rgba(0,0,0,.5);
   }
-  body.light{
-    --bg:#f5f2ec;--surface:#ffffff;--surface2:#ede9e0;--border:#d6d0c4;
-    --text:#1a1a1a;--text-muted:#777;--shadow:0 4px 24px rgba(0,0,0,.15);
-  }
+  body.light{--bg:#f5f2ec;--surface:#ffffff;--surface2:#ede9e0;--border:#d6d0c4;--text:#1a1a1a;--text-muted:#777;--shadow:0 4px 24px rgba(0,0,0,.15);background:#c8c0b0;}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   body{background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;height:100vh;transition:background .25s,color .25s;}
   input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
@@ -170,6 +167,7 @@
 </style>
 </head>
 <body>
+<div class="app-shell">
 
 <!-- SETUP -->
 <div id="setup" class="screen active">
@@ -321,6 +319,7 @@
 </div>
 
 <div id="toast"></div>
+</div><!-- end app-shell -->
 <div id="toast"></div>
 <script>
 // ── PREFS (son + thème) ──
