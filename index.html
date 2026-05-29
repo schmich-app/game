@@ -22,7 +22,7 @@
   input[type=number]{-moz-appearance:textfield;}
   .screen{display:none;position:fixed;inset:0;overflow-y:auto;background:var(--bg);z-index:1;}
   .screen.active{display:block;}
-  #game{display:none;flex-direction:column;overflow:hidden;height:100vh;}
+  #game{display:none;flex-direction:column;overflow:hidden;height:100vh;padding-bottom:env(safe-area-inset-bottom,0px);}
   #game.active{display:flex;}
   #setup{display:flex;flex-direction:column;}
   #setup.active{display:flex;}
@@ -71,7 +71,7 @@
   td.pending-cell{color:var(--text-muted);font-size:.75rem;text-align:center;}
   td.empty{color:var(--border);text-align:center;font-size:.75rem;}
 
-  .entry-panel{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:.6rem .8rem .7rem;max-height:58vh;overflow-y:auto;}
+  .entry-panel{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:.5rem .8rem .5rem;max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .entry-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
   .current-player-label{font-size:.95rem;font-weight:600;color:var(--accent);}
   .bars-warning{background:#3a2200;border:1px solid var(--bar-color);border-radius:6px;padding:.4rem .7rem;font-size:.78rem;color:var(--bar-color);margin-bottom:.4rem;line-height:1.4;}
