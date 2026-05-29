@@ -357,7 +357,7 @@ var SECTIONS=[
   {label:'Divers',cols:6,combos:[{die:5,pts:50},{die:1,pts:100},{label:'Suite',pts:1000}]},
   {label:'Triple ×3',cols:6,combos:[{die:1,pts:1000},{die:2,pts:200},{die:3,pts:300},{die:4,pts:400},{die:5,pts:500},{die:6,pts:600}]},
   {label:'Quadruple ×4',cols:6,combos:[{die:1,pts:2000},{die:2,pts:400},{die:3,pts:600},{die:4,pts:800},{die:5,pts:1000},{die:6,pts:1200}]},
-  {label:'Quintuple ×5',cols:6,combos:[{die:1,pts:4000},{die:2,pts:800},{die:3,pts:1200},{die:4,pts:1600},{die:5,pts:2000},{die:6,pts:2400}],extra:6},
+  {label:'Quintuple ×5',cols:6,combos:[{die:1,pts:4000},{die:2,pts:800},{die:3,pts:1200},{die:4,pts:1600},{die:5,pts:2000},{die:6,pts:2400}],extra:9},
 ];
 
 // ── STATE ──
@@ -450,7 +450,7 @@ function buildCalc(){
 
 // ── SETUP ──
 function initSetupRows(names){var list=document.getElementById('players-list');list.innerHTML='';(names||['','']).forEach(function(n){addPlayerRow(n);});}
-function addPlayerRow(name){name=name||'';var list=document.getElementById('players-list');if(list.children.length>=20)return;var row=document.createElement('div');row.className='player-input-row';row.innerHTML='<input type="text" placeholder="Nom du joueur" value="'+name+'"/><button class="btn-remove">×</button>';row.querySelector('.btn-remove').onclick=function(){if(list.children.length>2)row.remove();};list.appendChild(row);}
+function addPlayerRow(name){name=name||'';var list=document.getElementById('players-list');if(list.children.length>=20)return;var row=document.createElement('div');row.className='player-input-row';row.innerHTML='<input type="text" placeholder="Nom du joueur" value=""/><button class="btn-remove">×</button>';if(name){row.querySelector('input').value=name;}row.querySelector('.btn-remove').onclick=function(){if(list.children.length>2)row.remove();};list.appendChild(row);}
 
 // ── CALC HELPERS ──
 function syncCalc(){document.getElementById('manual-input').value=calcScore;document.getElementById('calc-total-label').textContent=calcScore+' pts';}
